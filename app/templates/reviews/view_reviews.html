@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Reviews for {{ listing.title }}</h1>
+    <ul>
+        {% for review in reviews %}
+            <li>
+                <strong>{{ review.user.username }}</strong>: {{ review.content }} 
+                - Rating: {{ review.rating }} ⭐
+                <em>Posted on: {{ review.created_at.strftime('%Y-%m-%d') }}</em>
+            </li>
+        {% else %}
+            <li>No reviews yet for this listing.</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('reviews.add_review', listing_id=listing.id) }}" class="btn btn-primary">Add a Review</a>
+{% endblock %}

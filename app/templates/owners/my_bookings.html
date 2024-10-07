@@ -1,0 +1,46 @@
+{% extends 'owners/base.html' %}
+
+{% block title %}My Bookings{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="text-center mb-4">Your Active Bookings</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Listing Title</th>
+                <th>Check-in Date</th>
+                <th>Check-out Date</th>
+                <th>Number of Days</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if bookings %}
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.booking_id }}</td>
+                    <td>{{ booking.listing_title }}</td>
+                    <td>{{ booking.check_in_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ booking.check_out_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ booking.num_days }}</td>
+                    <td>{{ booking.status }}</td>
+                    <td>
+                        <a href="{{ url_for('owners.booking_details', booking_id=booking.booking_id) }}" class="btn btn-info btn-sm">Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center">No active bookings found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('owners.my_listings') }}" class="btn btn-secondary">Back to My Listings</a>
+</div>
+{% endblock %}

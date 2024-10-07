@@ -1,0 +1,117 @@
+{% extends 'owners/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg p-4 mb-4 bg-white rounded">
+        <h2 class="card-title text-center mb-4">Booking Details</h2>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="card border-light mb-3">
+                    <div class="card-header">Booking ID</div>
+                    <div class="card-body">
+                        <p class="card-text">{{ booking.booking_id }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-light mb-3">
+                    <div class="card-header">Listing Title</div>
+                    <div class="card-body">
+                        <p class="card-text">{{ booking.listing_title }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-light mb-3">
+                    <div class="card-header">User</div>
+                    <div class="card-body">
+                        <p class="card-text">{{ booking.user }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-light mb-3">
+                    <div class="card-header">Check-in Date</div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            {{ booking.get('check_in_date', 'N/A').strftime('%Y-%m-%d') if booking.get('check_in_date') else 'N/A' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-light mb-3">
+                    <div class="card-header">Check-out Date</div>
+                    <div class="card-body">
+                        <p class="card-text">{{ booking.check_out_date.strftime('%Y-%m-%d') }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-light mb-3">
+                    <div class="card-header">Number of Guests</div>
+                    <div class="card-body">
+                        <p class="card-text">{{ booking.guests }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-light mb-3">
+                    <div class="card-header">Number of Days</div>
+                    <div class="card-body">
+                        <p class="card-text">{{ booking.num_days }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-light mb-3">
+                    <div class="card-header">Status</div>
+                    <div class="card-body">
+                        <p class="card-text">{{ booking.status }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-light mb-3">
+                    <div class="card-header">Created At</div>
+                    <div class="card-body">
+                        <p class="card-text">{{ booking.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-4">
+            <a href="{{ url_for('owners.my_bookings') }}" class="btn btn-primary btn-lg animate-btn">Back to My Bookings</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .animate-btn {
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .animate-btn:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+</style>

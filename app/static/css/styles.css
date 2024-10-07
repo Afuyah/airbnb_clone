@@ -1,0 +1,48 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.hero-section {
+    background-image: url('../images/hero-bg.jpg'); /* Path to your background image */
+    height: 60vh;
+    background-size: cover;
+    background-attachment: fixed; /* Parallax effect */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    z-index: 1;
+}
+
+.hero-content {
+    z-index: 2; /* Bring content above the overlay */
+}
+
+footer {
+    background-color: #f8f9fa;
+}
+footer a {
+    margin: 0 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Add more advanced CSS for other elements */

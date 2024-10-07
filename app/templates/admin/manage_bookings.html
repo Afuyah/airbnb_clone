@@ -1,0 +1,78 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Manage Bookings</h1>
+
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Booking ID</th>
+                <th>User</th>
+                <th>Listing</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.id }}</td>
+                    <td>{{ booking.user.username }}</td>
+                    <td>{{ booking.listing.title }}</td>
+                    <td>
+                        <form action="{{ url_for('admin.delete_booking', booking_id=booking.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this booking?');">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            {% if not bookings %}
+                <tr>
+                    <td colspan="4" class="text-center">No bookings found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+
+<style>
+
+    body {
+    background-color: #f8f9fa; /* Light gray background for better contrast */
+}
+
+h1 {
+    font-size: 2.5rem; /* Larger font size for the heading */
+    font-weight: bold; /* Bold heading */
+    color: #343a40; /* Darker text color */
+}
+
+.table {
+    border-radius: 0.5rem; /* Rounded corners for the table */
+    overflow: hidden; /* Ensures the rounded corners are applied */
+}
+
+.table th {
+    background-color: #343a40; /* Dark background for header */
+    color: white; /* White text for contrast */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #e9ecef; /* Light gray for alternate rows */
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1; /* Light gray on hover */
+}
+
+.btn-danger {
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for button hover effects */
+}
+
+.btn-danger:hover {
+    background-color: #c82333; /* Darker red on hover for the delete button */
+    color: white; /* Maintain white text on hover */
+}
+</style>
+{% endblock %}

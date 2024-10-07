@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Find Your Perfect Stay{% endblock %}
+
+{% block content %}
+<!-- Intro Section with Fluid Animations -->
+<section class="intro-section">
+    <div class="container text-center">
+        <h1 class="display-3 font-weight-bold">Discover Exceptional Stays</h1>
+        <p class="lead mt-3">Explore unique homes, unforgettable experiences, and endless possibilities.</p>
+        <a href="{{ url_for('listings.list_listings') }}" class="btn btn-explore btn-lg mt-4">Explore Listings</a>
+    </div>
+</section>
+
+<!-- Featured Listings with Interactive Grid -->
+<section class="featured-listings py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Our Handpicked Listings</h2>
+        <div class="row">
+            {% for listing in featured_listings %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card listing-card shadow-lg position-relative overflow-hidden">
+                        <div class="card-image-wrapper">
+                            <img src="{{ listing.images[0].url if listing.images else url_for('static', filename='images/placeholder.jpg') }}" class="card-img-top" alt="{{ listing.title }}">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p class="card-text">{{ listing.location.name }}</p>
+                            <p class="card-text"><strong>Ksh. {{ listing.price_per_night }} per night</strong></p>
+                            <a href="{{ url_for('listings.view_listing', listing_id=listing.id) }}" class="btn btn-primary stretched-link">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <p class="text-center">No featured listings available at the moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Parallax Section with Unique Stays -->
+<section class="parallax-section text-center text-light py-5" style="background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('{{ url_for('static', filename='images/unique-stay-bg.jpg') }}'); background-attachment: fixed; background-size: cover;">
+    <div class="container">
+        <h2 class="display-4 mb-4">Experience Unique Stays</h2>
+        <p class="lead mb-5">From cozy countryside homes to stunning city apartments, we have a range of properties for every type of traveler.</p>
+        <a href="{{ url_for('listings.list_listings') }}" class="btn btn-outline-light btn-lg">Discover More</a>
+    </div>
+</section>
+
+<!-- Curated Experiences Section with Icons -->
+<section class="curated-experiences py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Tailored Experiences</h2>
+        <div class="row text-center">
+            <div class="col-lg-4">
+                <div class="experience-card p-4 shadow-sm">
+                    <div class="icon-wrapper mb-3">
+                        <i class="fas fa-tree fa-3x text-primary"></i>
+                    </div>
+                    <h4>Eco-Friendly Stays</h4>
+                    <p>Discover nature-centric stays that are eco-friendly and sustainable.</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="experience-card p-4 shadow-sm">
+                    <div class="icon-wrapper mb-3">
+                        <i class="fas fa-gem fa-3x text-secondary"></i>
+                    </div>
+                    <h4>Luxury Escapes</h4>
+                    <p>Indulge in high-end properties that redefine luxury living and relaxation.</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="experience-card p-4 shadow-sm">
+                    <div class="icon-wrapper mb-3">
+                        <i class="fas fa-hiking fa-3x text-success"></i>
+                    </div>
+                    <h4>Adventure Getaways</h4>
+                    <p>Experience thrilling adventures while staying in beautiful locations.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Seamless CTA Section -->
+<section class="cta-section py-5 text-center bg-dark text-light mb-5">
+    <div class="container">
+        <h2 class="display-4">Join Our Global Community</h2>
+        <p class="lead mt-3">Find amazing places to stay and create lasting memories with us.</p>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-lg btn-light mt-4">Get Started Today</a>
+    </div>
+</section>
+
+<!-- Custom Styles -->
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    .intro-section {
+        padding: 100px 0;
+        background-color: #f0f0f0;
+        animation: fadeInUp 1s ease-in-out;
+    }
+
+    .intro-section h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #333;
+        line-height: 1.2;
+    }
+
+    .intro-section p {
+        font-size: 1.25rem;
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-explore {
+        background-color: #1a73e8;
+        color: #fff;
+        border-radius: 30px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-explore:hover {
+        background-color: #0a5ccd;
+    }
+
+    /* Featured Listings */
+    .featured-listings {
+        padding: 60px 0;
+        background-color: #fff;
+    }
+
+    .listing-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .listing-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-image-wrapper {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .card-image-wrapper img {
+        width: 100%;
+        height: auto;
+        transition: transform 0.5s ease;
+    }
+
+    .card-image-wrapper:hover img {
+        transform: scale(1.1);
+    }
+
+    /* Parallax Section */
+    .parallax-section {
+        position: relative;
+        color: white;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+
+    .parallax-section h2 {
+        font-size: 2.8rem;
+        font-weight: bold;
+    }
+
+    .parallax-section p {
+        font-size: 1.2rem;
+    }
+
+    /* Curated Experiences */
+    .curated-experiences {
+        padding: 60px 0;
+    }
+
+    .experience-card {
+        background-color: #fff;
+        border-radius: 10px;
+        transition: box-shadow 0.3s ease;
+        padding: 30px;
+    }
+
+    .experience-card:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon-wrapper {
+        margin-bottom: 20px;
+    }
+
+    .experience-card h4 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background-color: #222;
+        color: #fff;
+        padding: 80px 0;
+    }
+
+    .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+    }
+
+    .cta-section p {
+        font-size: 1.2rem;
+    }
+
+    .cta-section .btn-light {
+        border-radius: 30px;
+        padding: 12px 25px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .cta-section .btn-light:hover {
+        background-color: #e0e0e0;
+        transform: scale(1.05);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+{% endblock %}

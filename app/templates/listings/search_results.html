@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Airbnb{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Search Results</h2>
+
+    {% if listings %}
+        <div class="row">
+            {% for listing in listings %}
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-lg listing-card">
+                        <img src="{{ listing.images[0].url if listing.images else url_for('static', filename='images/default-image.jpg') }}" class="card-img-top" alt="Image of {{ listing.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p class="card-text">{{ listing.location.name }}</p>
+                            <p class="card-text"><strong>Ksh. {{ listing.price_per_night }} per night</strong></p>
+                            <a href="{{ url_for('listings.view_listing', listing_id=listing.id) }}" class="btn btn-primary">View Listing</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center">No listings found for your search criteria.</p>
+    {% endif %}
+</div>
+{% endblock %}

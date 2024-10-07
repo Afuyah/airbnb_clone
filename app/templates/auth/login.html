@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Modern Airbnb Clone{% endblock %}
+
+{% block content %}
+    <div class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <!-- Login Card with smooth entrance animation -->
+                <div class="card mt-5 fade-in" data-aos="fade-up">
+                    <div class="card-header text-center">
+                        <h2 class="font-weight-bold">Login</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('auth.login') }}">
+                            {{ form.hidden_tag() }}
+
+                            <div class="form-group">
+                                <label for="email" class="font-weight-bold">Email</label>
+                                {{ form.email(class="form-control", placeholder="Enter your email", render_kw={"aria-label": "Email", "autofocus": True}) }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger">
+                                        <small>{{ form.email.errors[0] }}</small>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password" class="font-weight-bold">Password</label>
+                                {{ form.password(class="form-control", placeholder="Enter your password", render_kw={"aria-label": "Password"}) }}
+                                {% if form.password.errors %}
+                                    <div class="text-danger">
+                                        <small>{{ form.password.errors[0] }}</small>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block btn-custom">Login</button>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center">
+                        <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
+                        <p><a href="#">Forgot Password?</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Initialize AOS animations -->
+    <script>
+        AOS.init({
+            duration: 1000, // Animation duration for smoother effect
+            easing: 'ease-in-out', // Smoother transitions
+            once: true, // Animations only once
+        });
+    </script>
+
+    <style>
+        /* Smooth fade-in animation for the card */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in[data-aos] {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header h2 {
+            font-size: 1.8rem;
+            color: #333;
+        }
+
+        .btn-custom {
+            background-color: #007bff;
+            border-radius: 50px;
+            padding: 10px 20px;
+            transition: background-color 0.4s ease, transform 0.4s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .form-control {
+            border-radius: 8px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+            border-color: #007bff;
+        }
+
+        .card-footer p a {
+            color: #007bff;
+            transition: color 0.3s ease;
+        }
+
+        .card-footer p a:hover {
+            color: #0056b3;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Owners Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+
+    <style>
+        body {
+            background-color: #f7f9fc;
+            color: #000;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #sidebar-wrapper {
+            background-color: #343a40;
+            color: white;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .sidebar-heading {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            color: #000000;
+        }
+
+        .list-group-item {
+            color: #000;
+            transition: all 0.3s ease;
+        }
+
+        .list-group-item:hover {
+            background-color: #495057;
+            color: white;
+        }
+
+        .list-group-item.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        #page-content-wrapper {
+            width: 100%;
+            padding: 20px;
+        }
+
+        .navbar {
+            background-color: #007bff;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            color: white !important;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .container-fluid {
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                position: absolute;
+                z-index: 1000;
+                left: -250px;
+                transition: left 0.3s ease;
+            }
+
+            #sidebar-wrapper.toggled {
+                left: 0;
+            }
+
+            #page-content-wrapper {
+                padding: 0;
+            }
+
+            .navbar .navbar-toggler {
+                margin-right: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar Navigation -->
+        <div class="bg-light border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom">Owners
+                Dashboard</div>
+            <div class="list-group list-group-flush">
+                <a href="{{ url_for('owners.my_listings') }}" class="list-group-item list-group-item-action bg-light {% if request.endpoint == 'owners.my_listings' %}active{% endif %}">My Listings</a>
+                
+                <a href="{{ url_for('owners.create_listing') }}" class="list-group-item list-group-item-action bg-light {% if request.endpoint == 'owners.create_listing' %}active{% endif %}">Create Listing</a>
+                <a href="{{ url_for('owners.my_bookings') }}" class="list-group-item list-group-item-action bg-light {% if request.endpoint == 'owners.my_bookings' %}active{% endif %}">My Bookings</a>
+                <a href="{{ url_for('auth.logout') }}" class="list-group-item list-group-item-action bg-light" onclick="return confirm('Are you sure you want to log out?');">Logout</a>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <button class="btn btn-primary" id="menu-toggle"><i class="fas fa-bars"></i></button>
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">{{ current_user.username }}</a>
+                </div>
+            </nav>
+
+            <div class="container-fluid mt-4">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="alert alert-warning" role="alert">
+                    {{ messages[0] }}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        // Toggle the sidebar
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#sidebar-wrapper").toggleClass("toggled");
+        });
+        
+        // Initialize DataTables if there are any tables present
+        $(document).ready(function() {
+            if ($.fn.DataTable) {
+                $('#listingsTable').DataTable();
+            }
+        });
+    </script>
+</body>
+
+</html>

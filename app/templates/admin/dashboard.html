@@ -1,0 +1,119 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<h2 class="my-4">Dashboard</h2>
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card text-white bg-primary mb-3 shadow-sm hover-effect">
+            <div class="card-header">Total Users</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ users | length }}</h5>
+                <p class="card-text">Total registered users.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-white bg-success mb-3 shadow-sm hover-effect">
+            <div class="card-header">Total Listings</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ listings | length }}</h5>
+                <p class="card-text">Total active listings.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-white bg-danger mb-3 shadow-sm hover-effect">
+            <div class="card-header">Total Bookings</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ bookings | length }}</h5>
+                <p class="card-text">Total bookings made.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Optional: Chart Section for Visual Metrics -->
+<div class="row">
+    <div class="col-md-12">
+        <h3 class="my-4">User Growth Over Time</h3>
+        <canvas id="userGrowthChart"></canvas>
+    </div>
+</div>
+
+{% endblock %}
+
+<style>
+    .hover-effect {
+        transition: transform 0.2s, box-shadow 0.2s; /* Added shadow transition */
+    }
+
+    .hover-effect:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Added shadow on hover for depth */
+        cursor: pointer;
+    }
+
+    /* Chart Container Styles */
+    canvas {
+        max-height: 400px; /* Limit height for better visibility */
+        margin-top: 20px; /* Add some margin for spacing */
+        border-radius: 0.5rem; /* Rounded corners for the chart */
+        background-color: white; /* Background for better contrast */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Example data - replace with actual data from your backend
+    const labels = ["January", "February", "March", "April", "May", "June"];
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'User Growth',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2, // Slightly thicker line
+            pointRadius: 4, // Slightly larger points
+            pointBackgroundColor: 'rgba(75, 192, 192, 1)', // Point color
+            data: [12, 19, 3, 5, 2, 3], // Replace with dynamic data
+        }]
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, // Allow chart to adjust height
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'User Growth Over Time'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true, // Start Y-axis at zero
+                }
+            }
+        }
+    };
+
+    // Initialize chart
+    const userGrowthChart = new Chart(
+        document.getElementById('userGrowthChart'),
+        config
+    );
+</script>

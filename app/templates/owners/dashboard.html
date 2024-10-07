@@ -1,0 +1,117 @@
+{% extends 'owners/base.html' %}
+
+{% block title %}Owners Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5">
+    <h2 class="text-center mb-4">Welcome to Your Dashboard, {{ current_user.username }}!</h2>
+
+    <div class="row">
+        <!-- Total Listings Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center shadow-sm border-0 rounded hover-zoom">
+                <div class="card-header bg-primary text-white py-4">
+                    <i class="fas fa-list fa-2x"></i>
+                    <h4>Total Listings</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title display-4">{{ listings_count }}</h5>
+                    <p class="card-text">Manage your properties efficiently.</p>
+                    <a href="{{ url_for('owners.my_listings') }}" class="btn btn-outline-primary btn-lg">View Listings</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Bookings Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center shadow-sm border-0 rounded hover-zoom">
+                <div class="card-header bg-success text-white py-4">
+                    <i class="fas fa-calendar-check fa-2x"></i>
+                    <h4>Total Bookings</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title display-4">{{ bookings_count }}</h5>
+                    <p class="card-text">Keep track of your bookings and manage them easily.</p>
+                    <ul class="list-group">
+                        {% if recent_listings %}
+                            {% for listing in recent_listings %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ listing.title }}
+                                <a href="{{ url_for('owners.view_bookings', listing_id=listing.id) }}" class="btn btn-secondary btn-sm">View Bookings</a>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item">No recent listings found.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center shadow-sm border-0 rounded hover-zoom">
+                <div class="card-header bg-info text-white py-4">
+                    <i class="fas fa-history fa-2x"></i>
+                    <h4>Recent Activity</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Your Recent Listings</h5>
+                    <ul class="list-group">
+                        {% if recent_listings %}
+                            {% for listing in recent_listings %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ listing.title }} 
+                                <span class="text-muted">{{ listing.created_at.strftime('%Y-%m-%d') }}</span>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item">No recent listings found.</li>
+                        {% endif %}
+                    </ul>
+                    <a href="{{ url_for('owners.create_listing') }}" class="btn btn-primary mt-3">Create New Listing</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Card Hover Effect */
+    .hover-zoom {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    
+    .hover-zoom:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Card Header Styling */
+    .card-header {
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .card-header i {
+        margin-right: 10px;
+    }
+
+    /* Button Hover Animation */
+    .btn-lg {
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-lg:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+
+    /* Smooth Transitions for Hover Effects */
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: white;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Your Support Requests</h1>
+
+        <!-- Support Requests Card -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for request in requests %}
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ request.subject }}</strong>
+                                <p class="mb-1">{{ request.message }}</p>
+                                <em>Status: {{ request.status }} - Created on: {{ request.created_at.strftime('%Y-%m-%d') }}</em>
+                            </div>
+                            <button class="btn btn-info btn-sm" onclick="toggleDetails(this)">View Details</button>
+                            <div class="details" style="display:none;">
+                                <!-- Add more details here if necessary -->
+                                <p>Additional info about the request can go here.</p>
+                            </div>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item text-center">No support requests submitted yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        function toggleDetails(button) {
+            const details = button.closest('li').querySelector('.details');
+            if (details.style.display === "none") {
+                details.style.display = "block";
+                button.innerText = "Hide Details";
+            } else {
+                details.style.display = "none";
+                button.innerText = "View Details";
+            }
+        }
+    </script>
+{% endblock %}

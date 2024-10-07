@@ -1,0 +1,10 @@
+<form action="{{ url_for('listings.create_listing') }}" method="POST">
+    <input type="text" name="title" placeholder="Listing Title" required>
+    <textarea name="description" placeholder="Description" required></textarea>
+    <select name="amenities" multiple>
+        {% for amenity in amenities %}
+            <option value="{{ amenity.id }}">{{ amenity.name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Create Listing</button>
+</form>

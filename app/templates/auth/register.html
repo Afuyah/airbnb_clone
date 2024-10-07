@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Create an Account - Modern Airbnb Clone{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <h1 class="text-center">Create an Account</h1>
+    
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6">
+            <!-- Registration Form with fade-in animation -->
+            <form method="POST" class="form-card p-4 fade-in" data-aos="fade-up">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    {{ form.username.label(class="font-weight-bold") }}
+                    {{ form.username(class="form-control", placeholder="Enter your username", render_kw={"aria-label": "Username"}) }}
+                    {% if form.username.errors %}
+                        <div class="text-danger">
+                            <small>{{ form.username.errors[0] }}</small>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.email.label(class="font-weight-bold") }}
+                    {{ form.email(class="form-control", placeholder="Enter your email", render_kw={"aria-label": "Email"}) }}
+                    {% if form.email.errors %}
+                        <div class="text-danger">
+                            <small>{{ form.email.errors[0] }}</small>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.password.label(class="font-weight-bold") }}
+                    {{ form.password(class="form-control", placeholder="Create a password", render_kw={"aria-label": "Password"}) }}
+                    {% if form.password.errors %}
+                        <div class="text-danger">
+                            <small>{{ form.password.errors[0] }}</small>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.confirm_password.label(class="font-weight-bold") }}
+                    {{ form.confirm_password(class="form-control", placeholder="Confirm your password", render_kw={"aria-label": "Confirm Password"}) }}
+                    {% if form.confirm_password.errors %}
+                        <div class="text-danger">
+                            <small>{{ form.confirm_password.errors[0] }}</small>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-custom">Create Account</button>
+
+                <p class="text-center mt-3">Already have an account? <a href="{{ url_for('auth.login') }}" class="text-primary">Login here</a>.</p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and AOS Animation Library -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+
+<script>
+    AOS.init({
+        duration: 1000,  // Animations last 1 second
+        easing: 'ease-in-out', // Smoother animation transitions
+        once: true // Animations fire only once
+    });
+</script>
+
+<style>
+    /* Card Styling with Shadow and Rounded Edges */
+    .form-card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Smooth fade-in animation for form */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-in[data-aos] {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .btn-custom {
+        background-color: #007bff;
+        border-radius: 50px;
+        padding: 10px 20px;
+        transition: background-color 0.4s ease, transform 0.4s ease;
+    }
+
+    .btn-custom:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .form-control {
+        border-radius: 8px;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        border-color: #007bff;
+    }
+
+    a.text-primary:hover {
+        color: #0056b3;
+    }
+
+    .form-label {
+        font-weight: bold;
+    }
+</style>
+{% endblock %}

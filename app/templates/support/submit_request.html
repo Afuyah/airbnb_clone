@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Submit a Support Request</h1>
+    <div class="card shadow-sm form-card">
+        <div class="card-body">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.subject.label(class="font-weight-bold") }}
+                    {{ form.subject(class="form-control", placeholder="Enter the subject of your request") }}
+                </div>
+                <div class="form-group">
+                    {{ form.message.label(class="font-weight-bold") }}
+                    {{ form.message(class="form-control", rows=5, placeholder="Describe your issue or request here") }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg btn-custom">Submit Request</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Custom Styles for Support Request Form */
+.form-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.form-group {
+    margin-bottom: 24px; /* Space between form groups */
+}
+
+.btn-primary {
+    transition: background-color 0.3s, transform 0.3s;
+    border-radius: 50px; /* Rounded button */
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+.btn-custom {
+    padding: 10px 20px; /* Padding for the button */
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .btn-lg {
+        width: 100%; /* Full-width button on small screens */
+    }
+
+    .form-card {
+        padding: 20px; /* Padding for small screens */
+    }
+}
+
+/* Input focus effects */
+.form-control:focus {
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Glowing effect on focus */
+    border-color: #007bff;
+    outline: none; /* Remove default outline */
+}
+</style>
+{% endblock %}

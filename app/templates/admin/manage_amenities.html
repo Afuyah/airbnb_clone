@@ -1,0 +1,44 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<h2 class="my-4">Manage Amenities</h2>
+
+<!-- Form to Add Amenities -->
+<form action="{{ url_for('admin.add_amenity') }}" method="POST" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="name" placeholder="Amenity Name" required class="form-control" aria-label="Amenity Name">
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">Add Amenity</button>
+        </div>
+    </div>
+</form>
+
+<!-- Amenities Table -->
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Amenity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for amenity in amenities %}
+            <tr>
+                <td>{{ amenity.name }}</td>
+                <td>
+                    <form action="{{ url_for('admin.delete_amenity', amenity_id=amenity.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this amenity?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if not amenities %}
+<div class="alert alert-info" role="alert">No amenities available.</div>
+{% endif %}
+
+{% endblock %}
