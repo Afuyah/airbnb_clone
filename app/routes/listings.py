@@ -62,43 +62,32 @@ def view_listing(listing_id):
 @login_required
 def create_listing():
     form = ListingForm()
-    
+
     if form.validate_on_submit():
         new_listing = Listing(
             title=form.title.data,
             description=form.description.data,
             price_per_night=form.price.data,
             owner_id=current_user.id,
-            location_id=form.location_id.data
+            location_id=form.location_id.data,
+            bedrooms=form.bedrooms.data,  
         )
+        
         db.session.add(new_listing)
-
-        # Commit to save the listing first and generate its ID for the image association
-        db.session.commit()
-
-        selected_amenities = form.amenities.data
-        for amenity_id in selected_amenities:
-            amenity = Amenity.query.get(amenity_id)
-            if amenity:
-                new_listing.amenities.append(amenity)
-
-        images = request.files.getlist('images')
-        for image_file in images:
-            if image_file and allowed_file(image_file.filename):
-                image_url = save_image(image_file)
-                if image_url:
-                    new_image = Image(url=image_url, listing_id=new_listing.id)
-                    db.session.add(new_image)
 
         try:
             db.session.commit()
             flash('Listing created successfully.', 'success')
-            return redirect(url_for('listings.view_listing', listing_id=new_listing.id))
+            return redirect(url_for('listings.upload_images', listing_id=new_listing.id))
         except Exception as e:
-            db.session.rollback()  # Rollback the session if there is an error
+            db.session.rollback()
             flash(f'Error creating listing: {str(e)}', 'danger')
 
     return render_template('listings/create_listing.html', form=form)
+
+
+
+
 @listings_bp.route('/search', methods=['GET'])
 def search():
     location = request.args.get('location')
@@ -128,3 +117,44 @@ def search():
     listings = query.all()  # Execute the query
 
     return render_template('listings/search_results.html', listings=listings, location=location, check_in=check_in, check_out=check_out)
+
+
+
+@listings_bp.route('/listings/<int:listing_id>/upload_images', methods=['GET', 'POST'])
+@login_required
+def upload_images(listing_id):
+    listing = Listing.query.get_or_404(listing_id)
+
+    if request.method == 'POST':
+        # Handle cover image upload
+        cover_image_file = request.files.get('cover_image')
+        if cover_image_file and allowed_file(cover_image_file.filename):
+            cover_image_url = save_image(cover_image_file)
+            if cover_image_url:
+                new_cover_image = Image(url=cover_image_url, listing_id=listing.id)
+                db.session.add(new_cover_image)
+
+        # Handle multiple images (up to 10)
+        images = request.files.getlist('images')
+        image_count = 0
+        for image_file in images:
+            if image_count >= 10:
+                flash('You can upload a maximum of 10 images.', 'warning')
+                break
+            if image_file and allowed_file(image_file.filename):
+                image_url = save_image(image_file)
+                if image_url:
+                    new_image = Image(url=image_url, listing_id=listing.id)
+                    db.session.add(new_image)
+                    image_count += 1
+
+        try:
+            db.session.commit()
+            flash('Images uploaded successfully.', 'success')
+            return redirect(url_for('listings.view_listing', listing_id=listing.id))
+        except Exception as e:
+            db.session.rollback()  # Rollback the session if there is an error
+            flash(f'Error uploading images: {str(e)}', 'danger')
+
+    return render_template('listings/upload_images.html', listing=listing)
+

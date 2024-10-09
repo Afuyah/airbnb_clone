@@ -1,0 +1,178 @@
+  :root {
+        --primary-color: #3498db;
+        --secondary-color: #2ecc71;
+        --background-color: #f8f9fa;
+        --text-color: #2c3e50;
+        --card-shadow: rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        font-family: 'Roboto', sans-serif;
+    }
+
+    h1, h2 {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--text-color);
+    }
+
+    .listing-detail h1, .listing-detail h2 {
+        font-weight: 700;
+    }
+
+    .swiper-container {
+        width: 100%;
+        height: 500px;
+    }
+
+    .swiper-slide img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .swiper-slide img:hover {
+        transform: scale(1.05);
+    }
+
+    .badge-light {
+        background-color: #f8f9fa;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #fff;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: darken(var(--primary-color), 10%);
+        transform: scale(1.05);
+    }
+
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 4px 20px var(--card-shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px var(--card-shadow);
+    }
+
+    .fadeIn {
+        animation: fadeIn 0.6s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .related-listings {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: darken(var(--primary-color), 10%);
+    }
+
+     body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f4f4f4;
+        transition: background-color 0.5s ease;
+    }
+    h1, h2 {
+        font-family: 'Montserrat', sans-serif;
+        color: #2C3E50;
+    }
+    .btn {
+        background-color: #3498DB;
+        color: #fff;
+        border-radius: 25px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        padding: 10px 20px; /* Added padding for better button size */
+        font-weight: bold; /* Bold font for buttons */
+    }
+    .btn:hover {
+        background-color: #2980B9;
+        transform: scale(1.05); /* Slight scaling effect on hover */
+    }
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px; /* Soft card corners */
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Modern shadow */
+        opacity: 0; /* Start invisible for slide-in effect */
+        animation: slideIn 0.5s forwards; /* Animation for slide-in effect */
+    }
+    @keyframes slideIn {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    .card:hover {
+        transform: translateY(-10px); /* Increased lift effect */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* More prominent shadow on hover */
+    }
+    .card-img-top {
+        border-radius: 15px 15px 0 0; /* Smooth image corners */
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.3s ease; /* Smooth zoom on hover */
+    }
+    .card-img-top:hover {
+        transform: scale(1.05); /* Slight zoom effect on hover */
+    }
+    .container {
+        max-width: 1200px;
+    }
+    /* Dark Mode Styles */
+    .dark-mode {
+        background-color: #1f1f1f;
+        color: #f4f4f4;
+    }
+    .dark-mode h1, .dark-mode h2 {
+        color: #ecf0f1;
+    }
+    .dark-mode .btn {
+        background-color: #2C3E50;
+    }
+    .dark-mode .btn:hover {
+        background-color: #34495E;
+    }
+    .dark-mode .card {
+        background-color: #2C3E50; /* Card background in dark mode */
+        border: 1px solid #34495E; /* Border for cards in dark mode */
+    }
+    .dark-mode .card-title, .dark-mode .card-text {
+        color: #ecf0f1; /* Text color in dark mode */
+    }

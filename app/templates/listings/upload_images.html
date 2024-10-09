@@ -1,0 +1,17 @@
+{% extends 'owners/base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Upload Images for {{ listing.title }}</h2>
+
+<form action="{{ url_for('listings.upload_images', listing_id=listing.id) }}" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="images">Select Images (max 10):</label>
+        <input type="file" name="images" id="images" multiple accept="image/*" class="form-control" required>
+        <small class="form-text text-muted">You can upload a maximum of 10 images.</small>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Upload Images</button>
+    <a href="{{ url_for('listings.view_listing', listing_id=listing.id) }}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

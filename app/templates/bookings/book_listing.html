@@ -1,29 +1,109 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Book {{ listing.title }}</h1>
+<h1 class="text-center my-4">Book {{ listing.title }}</h1>
 
-<form method="POST" class="form-group">
-    {{ form.hidden_tag() }}
-    <div class="mb-3">
-        {{ form.check_in_date.label(class="form-label") }} {{ form.check_in_date(class="form-control") }}
-        {% for error in form.check_in_date.errors %}
-            <span class="error text-danger">{{ error }}</span>
-        {% endfor %}
-    </div>
-    <div class="mb-3">
-        {{ form.check_out_date.label(class="form-label") }} {{ form.check_out_date(class="form-control") }}
-        {% for error in form.check_out_date.errors %}
-            <span class="error text-danger">{{ error }}</span>
-        {% endfor %}
-    </div>
-    <div class="mb-3">
-        {{ form.guests.label(class="form-label") }} {{ form.guests(class="form-control") }}
-        {% for error in form.guests.errors %}
-            <span class="error text-danger">{{ error }}</span>
-        {% endfor %}
-    </div>
-    <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
-</form>
+<div class="container">
+    <form method="POST" class="form-group">
+        {{ form.hidden_tag() }}
+        
+        <div class="mb-3">
+            {{ form.check_in_date.label(class="form-label") }} 
+            {{ form.check_in_date(class="form-control", id="check_in_date") }}
+            {% for error in form.check_in_date.errors %}
+                <span class="error text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.check_out_date.label(class="form-label") }} 
+            {{ form.check_out_date(class="form-control", id="check_out_date") }}
+            {% for error in form.check_out_date.errors %}
+                <span class="error text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.guests.label(class="form-label") }} 
+            {{ form.guests(class="form-control", id="guests") }}
+            {% for error in form.guests.errors %}
+                <span class="error text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <h4 id="total-amount" class="text-success">Total Amount: $0.00</h4>
+        
+        <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
+    </form>
 
+    <div class="alert alert-info my-4" role="alert">
+        Your booking is just a click away! Secure your stay today and enjoy a memorable experience.
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const pricePerNight = {{ listing.price_per_night }};
+        const checkInInput = document.getElementById('check_in_date');
+        const checkOutInput = document.getElementById('check_out_date');
+        const guestsInput = document.getElementById('guests');
+        const totalAmountDisplay = document.getElementById('total-amount');
+
+        function calculateTotal() {
+            const checkInDate = new Date(checkInInput.value);
+            const checkOutDate = new Date(checkOutInput.value);
+            const guests = parseInt(guestsInput.value) || 1;
+
+            if (checkInDate && checkOutDate && checkInDate < checkOutDate) {
+                const nights = (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24);
+                const total = nights * pricePerNight * guests;
+                totalAmountDisplay.textContent = `Total Amount: $${total.toFixed(2)}`;
+            } else {
+                totalAmountDisplay.textContent = "Total Amount: $0.00";
+            }
+        }
+
+        checkInInput.addEventListener('change', calculateTotal);
+        checkOutInput.addEventListener('change', calculateTotal);
+        guestsInput.addEventListener('input', calculateTotal);
+    });
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f7f7f7;
+    }
+
+    .form-group {
+        max-width: 500px;
+        margin: auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+
+    input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+</style>
 {% endblock %}

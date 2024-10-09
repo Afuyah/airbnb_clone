@@ -2,61 +2,7 @@
 
 {% block content %}
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@600&display=swap" rel="stylesheet">
-<style>
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #f4f4f4;
-        transition: background-color 0.5s ease;
-    }
-    h1, h2 {
-        font-family: 'Montserrat', sans-serif;
-        color: #2C3E50;
-    }
-    .btn {
-        background-color: #3498DB;
-        color: #fff;
-        border-radius: 25px;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-    .btn:hover {
-        background-color: #2980B9;
-        transform: scale(1.1); /* Enhanced scaling effect on hover */
-    }
-    .card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: none;
-        border-radius: 15px; /* Soft card corners */
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Modern shadow */
-    }
-    .card:hover {
-        transform: translateY(-10px); /* Increased lift effect */
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* More prominent shadow on hover */
-    }
-    .card-img-top {
-        border-radius: 15px 15px 0 0; /* Smooth image corners */
-        height: 200px;
-        object-fit: cover;
-    }
-    .container {
-        max-width: 1200px;
-    }
-    /* Dark Mode Styles */
-    .dark-mode {
-        background-color: #1f1f1f;
-        color: #f4f4f4;
-    }
-    .dark-mode h1, .dark-mode h2 {
-        color: #ecf0f1;
-    }
-    .dark-mode .btn {
-        background-color: #2C3E50;
-    }
-    .dark-mode .btn:hover {
-        background-color: #34495E;
-    }
-</style>
-
+<link rel="stylesheet" href="{{ url_for('static', filename='css/listing.css') }}">
 <div class="container mt-5">
     <h1 class="display-4 text-center mb-5">Explore Unique Stays</h1>
     
@@ -65,7 +11,9 @@
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm">
                     {% if listing.images %}
-                        <img src="{{ listing.images[0].url }}" class="card-img-top" alt="{{ listing.title }}">
+                        <div class="card-img-container">
+                            <img src="{{ listing.images[0].url }}" class="card-img-top" alt="{{ listing.title }}">
+                        </div>
                     {% else %}
                         <img src="{{ url_for('static', filename='images/default-image.jpg') }}" class="card-img-top" alt="Default Image">
                     {% endif %}
@@ -83,13 +31,13 @@
     </div>
 
     <!-- Back to Top Button -->
-    <button id="backToTop" class="btn btn-secondary rounded-circle" style="position: fixed; bottom: 20px; right: 20px; display: none; z-index: 1000;">
+    <button id="backToTop" class="btn btn-secondary rounded-circle" style="position: fixed; bottom: 20px; right: 20px; display: none; z-index: 1000;" aria-label="Back to top">
         <i class="fa fa-chevron-up"></i>
     </button>
 </div>
 
 <!-- Dark Mode Toggle -->
-<div class="dark-mode-toggle">
+<div class="dark-mode-toggle text-center mt-3">
     <button id="darkModeToggle" class="btn btn-outline-secondary">Toggle Dark Mode</button>
 </div>
 
@@ -114,7 +62,15 @@
         // Dark mode toggle functionality
         darkModeToggle.addEventListener('click', function() {
             body.classList.toggle('dark-mode');
+            // Save dark mode preference to local storage
+            const isDarkMode = body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
         });
+
+        // Load dark mode preference on page load
+        if (localStorage.getItem('darkMode') === 'true') {
+            body.classList.add('dark-mode');
+        }
     });
 </script>
 {% endblock %}

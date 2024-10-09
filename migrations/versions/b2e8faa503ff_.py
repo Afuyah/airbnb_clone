@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 5dc3d292a9d2
+Revision ID: b2e8faa503ff
 Revises: 
-Create Date: 2024-10-07 04:08:42.819653
+Create Date: 2024-10-09 00:16:14.125767
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5dc3d292a9d2'
+revision = 'b2e8faa503ff'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,9 @@ def upgrade():
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    with op.batch_alter_table('amenities', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_amenities_name'), ['name'], unique=False)
+
     op.create_table('locations',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
@@ -30,16 +33,21 @@ def upgrade():
     sa.Column('longitude', sa.Float(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    with op.batch_alter_table('locations', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_locations_name'), ['name'], unique=False)
+
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=150), nullable=False),
     sa.Column('email', sa.String(length=150), nullable=False),
-    sa.Column('password_hash', sa.String(length=128), nullable=False),
+    sa.Column('password_hash', sa.String(length=256), nullable=False),
     sa.Column('role', sa.String(length=50), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('username')
+    sa.PrimaryKeyConstraint('id')
     )
+    with op.batch_alter_table('users', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_users_email'), ['email'], unique=True)
+        batch_op.create_index(batch_op.f('ix_users_username'), ['username'], unique=True)
+
     op.create_table('listings',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=150), nullable=False),
@@ -51,11 +59,14 @@ def upgrade():
     sa.Column('bedrooms', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['agent_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['location_id'], ['locations.id'], ),
-    sa.ForeignKeyConstraint(['owner_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['agent_id'], ['users.id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['location_id'], ['locations.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['owner_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
+    with op.batch_alter_table('listings', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_listings_title'), ['title'], unique=False)
+
     op.create_table('support_requests',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
@@ -63,7 +74,7 @@ def upgrade():
     sa.Column('message', sa.Text(), nullable=False),
     sa.Column('status', sa.String(length=50), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('bookings',
@@ -75,22 +86,22 @@ def upgrade():
     sa.Column('guests', sa.Integer(), nullable=False),
     sa.Column('status', sa.String(length=50), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('images',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('url', sa.String(length=255), nullable=False),
     sa.Column('listing_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ),
+    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('listing_amenities',
     sa.Column('listing_id', sa.Integer(), nullable=False),
     sa.Column('amenity_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['amenity_id'], ['amenities.id'], ),
-    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ),
+    sa.ForeignKeyConstraint(['amenity_id'], ['amenities.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('listing_id', 'amenity_id')
     )
     op.create_table('reviews',
@@ -100,8 +111,8 @@ def upgrade():
     sa.Column('content', sa.Text(), nullable=False),
     sa.Column('rating', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
@@ -114,8 +125,21 @@ def downgrade():
     op.drop_table('images')
     op.drop_table('bookings')
     op.drop_table('support_requests')
+    with op.batch_alter_table('listings', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_listings_title'))
+
     op.drop_table('listings')
+    with op.batch_alter_table('users', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_users_username'))
+        batch_op.drop_index(batch_op.f('ix_users_email'))
+
     op.drop_table('users')
+    with op.batch_alter_table('locations', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_locations_name'))
+
     op.drop_table('locations')
+    with op.batch_alter_table('amenities', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_amenities_name'))
+
     op.drop_table('amenities')
     # ### end Alembic commands ###

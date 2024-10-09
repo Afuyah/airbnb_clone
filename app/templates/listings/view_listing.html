@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/listing.css') }}">
+
 <div class="container listing-detail mt-5">
 
     <!-- Listing Title and Price -->
@@ -22,12 +25,12 @@
                     {% if listing.images %}
                         {% for image in listing.images %}
                             <div class="swiper-slide">
-                                <img src="{{ image.url }}" class="img-fluid rounded" alt="{{ listing.title }}" loading="lazy">
+                                <img src="placeholder.jpg" data-src="{{ image.url }}" class="img-fluid rounded lazy" alt="{{ listing.title }}" loading="lazy">
                             </div>
                         {% endfor %}
                     {% else %}
                         <div class="swiper-slide">
-                            <img src="{{ url_for('static', filename='images/default-image.jpg') }}" class="img-fluid rounded" alt="Default Image" loading="lazy">
+                            <img src="{{ url_for('static', filename='uploads/placeholder.jpg') }}" class="img-fluid rounded" alt="Default Image" loading="lazy">
                         </div>
                     {% endif %}
                 </div>
@@ -52,49 +55,94 @@
                     <li class="list-inline-item">No amenities listed.</li>
                 {% endfor %}
             </ul>
+
+            <!-- User Reviews Section -->
+            <h4 class="mt-5">Reviews</h4>
+            <div class="reviews-section">
+                {% if listing.reviews %}
+                    {% for review in listing.reviews %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ review.user.username }} <span class="text-muted">({{ review.created_at.strftime('%Y-%m-%d') }})</span></h5>
+                                <p class="card-text">{{ review.content }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No reviews yet. Be the first to review this listing!</p>
+                {% endif %}
+            </div>
         </div>
 
-        <!-- Booking Section -->
+ <!-- Booking Section -->
         <div class="col-md-4">
             <div class="card shadow-sm p-3 mb-4 fadeIn sticky-top">
                 <h4 class="text-center">Book this Listing</h4>
-                <form action="{{ url_for('bookings.book_listing', listing_id=listing.id) }}" method="POST" class="mt-3">
+                <form action="{{ url_for('bookings.book_listing', listing_id=listing.id) }}" method="POST" class="mt-3" id="booking-form">
                     {{ booking_form.hidden_tag() }}
                     <div class="form-group">
                         {{ booking_form.check_in_date.label(class="form-label") }}
-                        {{ booking_form.check_in_date(class="form-control", data='input', placeholder="Select check-in date") }}
+                        {{ booking_form.check_in_date(class="form-control", placeholder="Select check-in date", id="check-in") }}
                     </div>
                     <div class="form-group">
                         {{ booking_form.check_out_date.label(class="form-label") }}
-                        {{ booking_form.check_out_date(class="form-control", data='input', placeholder="Select check-out date") }}
+                        {{ booking_form.check_out_date(class="form-control", placeholder="Select check-out date", id="check-out") }}
+                    </div>
+                    <div class="form-group">
+                        <label for="total-price" class="form-label">Total Price</label>
+                        <input type="text" id="total-price" class="form-control" readonly>
                     </div>
                     <div class="text-center">
-                        {{ booking_form.submit(class="btn btn-success btn-block") }}
+                        <button type="submit" class="btn btn-success btn-block" id="book-button" {% if booked_status %}disabled{% endif %}>Book Now</button>
+                        {% if booked_status %}
+                            <div class="alert alert-warning mt-2">This property is already booked for the selected dates. Please choose different dates.</div>
+                        {% endif %}
                     </div>
                 </form>
             </div>
         </div>
-    </div>
+
+<script>
+    // Function to calculate total price
+    function calculateTotalPrice() {
+        const checkInDate = new Date(document.getElementById('check-in').value);
+        const checkOutDate = new Date(document.getElementById('check-out').value);
+        const pricePerNight = {{ listing.price }}; // Replace with the actual price per night
+
+        if (checkInDate && checkOutDate && checkOutDate > checkInDate) {
+            const timeDifference = checkOutDate - checkInDate;
+            const daysDifference = timeDifference / (1000 * 3600 * 24);
+            const totalPrice = daysDifference * pricePerNight;
+            document.getElementById('total-price').value = totalPrice.toFixed(2);
+        } else {
+            document.getElementById('total-price').value = '';
+        }
+    }
+
+    // Attach event listeners to date inputs
+    document.getElementById('check-in').addEventListener('change', calculateTotalPrice);
+    document.getElementById('check-out').addEventListener('change', calculateTotalPrice);
+</script>
+
+
 
     <!-- Related Listings -->
     <div class="row mt-5">
         <div class="col-12">
             <h3>Related Listings</h3>
-            <div class="row">
+            <div class="related-listings">
                 {% for related in related_listings %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card shadow-sm transition-transform">
-                            {% if related.images %}
-                                <img src="{{ related.images[0].url }}" class="card-img-top img-fluid" alt="{{ related.title }}" loading="lazy">
-                            {% else %}
-                                <img src="{{ url_for('static', filename='images/default-image.jpg') }}" class="card-img-top img-fluid" alt="Default Image" loading="lazy">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ related.title }}</h5>
-                                <p class="card-text text-muted">{{ related.location.name }}</p>
-                                <p class="text-success">Ksh. {{ related.price_per_night }} per night</p>
-                                <a href="{{ url_for('listings.view_listing', listing_id=related.id) }}" class="btn btn-primary btn-block">View Details</a>
-                            </div>
+                    <div class="card shadow-sm mb-4">
+                        {% if related.images %}
+                            <img src="placeholder.jpg" data-src="{{ related.images[0].url }}" class="card-img-top img-fluid lazy" alt="{{ related.title }}" loading="lazy">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='uploads/placeholder.jpg') }}" class="card-img-top img-fluid" alt="Default Image" loading="lazy">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ related.title }}</h5>
+                            <p class="card-text text-muted">{{ related.location.name }}</p>
+                            <p class="text-success">Ksh. {{ related.price_per_night }} per night</p>
+                            <a href="{{ url_for('listings.view_listing', listing_id=related.id) }}" class="btn btn-primary btn-block" data-toggle="tooltip" title="Click to view details">View Details</a>
                         </div>
                     </div>
                 {% else %}
@@ -105,133 +153,115 @@
     </div>
 </div>
 
+<!-- Custom Styles -->
+
 <!-- Swiper.js and Flatpickr Script -->
-<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
-    // Initialize Flatpickr for date inputs
-    flatpickr("[data-input]", {
-        dateFormat: "Y-m-d",
-        minDate: "today",
-    });
+// Initialize Swiper
+var swiper = new Swiper('.swiper-container', {
+    pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+    },
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+    },
+    loop: true,
+    autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+    },
+    effect: 'fade',
+});
 
-    // Initialize Swiper
-    var swiper = new Swiper('.swiper-container', {
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-        },
-        loop: true,
-        autoplay: {
-            delay: 5000,
-            disableOnInteraction: false,
-        },
-        lazy: true, // Lazy loading for better performance
+// Initialize Flatpickr for date inputs with validation
+flatpickr("#check-in", {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    onChange: function(selectedDates) {
+        const checkInDate = selectedDates[0];
+        const checkOutInput = document.getElementById('check-out');
+        
+        // Clear check-out date and total price if check-in is changed
+        checkOutInput._flatpickr.clear();
+        document.getElementById('total-price').value = '';
+
+        flatpickr(checkOutInput, {
+            minDate: checkInDate ? new Date(checkInDate.getTime() + 86400000) : "today"
+        });
+        calculateTotalPrice();
+    }
+});
+
+flatpickr("#check-out", {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    onChange: calculateTotalPrice
+});
+
+// Function to calculate total price based on selected dates
+function calculateTotalPrice() {
+    const checkInDate = document.getElementById('check-in')._flatpickr.selectedDates[0];
+    const checkOutDate = document.getElementById('check-out')._flatpickr.selectedDates[0];
+    const pricePerNight = {{ listing.price_per_night }};
+
+    if (checkInDate && checkOutDate) {
+        const nights = (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24);
+        if (nights > 0) {
+            const totalPrice = pricePerNight * nights;
+            document.getElementById('total-price').value = `Ksh. ${totalPrice.toFixed(2)}`;
+        } else {
+            document.getElementById('total-price').value = '';
+            alert('Check-out date must be after check-in date.');
+        }
+    } else {
+        document.getElementById('total-price').value = '';
+    }
+}
+
+// Wait for DOM content to load
+document.addEventListener("DOMContentLoaded", function() {
+    // Lazy loading images
+    const lazyImages = document.querySelectorAll('img.lazy');
+
+    const options = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                observer.unobserve(img);
+            }
+        });
+    }, options);
+
+    lazyImages.forEach(image => {
+        observer.observe(image);
     });
 
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+        anchor.addEventListener('click', function(e) {
             e.preventDefault();
             document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
         });
     });
+
+    // Initialize tooltips
+    $('[data-toggle="tooltip"]').tooltip();
+});
 </script>
 
-<!-- Custom Styles -->
-<style>
-    :root {
-        --primary-color: #3498db;
-        --secondary-color: #2ecc71;
-        --background-color: #f8f9fa;
-        --text-color: #2c3e50;
-    }
-
-    body {
-        background-color: var(--background-color);
-        color: var(--text-color);
-        font-family: 'Roboto', sans-serif;
-    }
-
-    h1, h2 {
-        font-family: 'Montserrat', sans-serif;
-        color: var(--text-color);
-    }
-
-    .listing-detail h1, .listing-detail h2 {
-        font-weight: 700;
-    }
-
-    .swiper-container {
-        width: 100%;
-        height: 500px;
-    }
-
-    .swiper-slide img {
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-        border-radius: 10px;
-        transition: transform 0.3s ease;
-    }
-
-    .swiper-slide img:hover {
-        transform: scale(1.05);
-    }
-
-    .badge-light {
-        background-color: #f8f9fa;
-    }
-
-    .btn-primary {
-        background-color: var(--primary-color);
-        color: #fff;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn-primary:hover {
-        background-color: darken(var(--primary-color), 10%);
-    }
-
-    .card:hover {
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        transform: translateY(-5px);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .fadeIn {
-        animation: fadeIn 0.6s ease-in-out;
-    }
-
-    .transition-transform {
-        transition: transform 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @media (max-width: 768px) {
-        .listing-detail {
-            padding: 15px;
-        }
-        .swiper-container {
-            height: 300px; /* Reduce height for smaller screens */
-        }
-    }
-</style>
 {% endblock %}

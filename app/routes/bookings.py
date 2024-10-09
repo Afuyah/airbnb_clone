@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from app.models.models import Booking, Listing
 from app.forms.forms import BookingForm
@@ -11,20 +11,53 @@ bookings_bp = Blueprint('bookings', __name__)
 def book_listing(listing_id):
     listing = Listing.query.get_or_404(listing_id)
     form = BookingForm()
+
     if form.validate_on_submit():
+        check_in = form.check_in_date.data
+        check_out = form.check_out_date.data
+
+        # Check for valid dates
+        if not check_in or not check_out:
+            flash('Please select both check-in and check-out dates.', 'danger')
+            return redirect(url_for('bookings.book_listing', listing_id=listing_id))
+
+        # Check for overlapping bookings
+        overlapping_bookings = Booking.query.filter(
+            Booking.listing_id == listing.id,
+            Booking.status != 'canceled',
+            (Booking.check_in_date < check_out) & (Booking.check_out_date > check_in)
+        ).first()
+
+        if overlapping_bookings:
+            flash('The selected dates are not available. Please choose different dates.', 'danger')
+            return redirect(url_for('bookings.book_listing', listing_id=listing_id))
+
+        # Create new booking if no overlaps
         new_booking = Booking(
             user_id=current_user.id,
             listing_id=listing.id,
-            check_in_date=form.check_in_date.data,
-            check_out_date=form.check_out_date.data,
-            guests=form.guests.data  # Make sure to include this line
+            check_in_date=check_in,
+            check_out_date=check_out,
+            guests=form.guests.data
         )
         db.session.add(new_booking)
         db.session.commit()
         flash('Booking confirmed!', 'success')
         return redirect(url_for('bookings.my_bookings'))
-    return render_template('bookings/book_listing.html', form=form, listing=listing)
 
+    # On GET request or if form is not valid, check for booked status
+    booked_status = False
+
+    # Ensure the fields are properly populated
+    if form.check_in_date.data and form.check_out_date.data:
+        # Check if the listing is already booked during the requested period
+        booked_status = Booking.query.filter(
+            Booking.listing_id == listing.id,
+            Booking.status != 'canceled',
+            (Booking.check_in_date < form.check_out_date.data) & (Booking.check_out_date > form.check_in_date.data)
+        ).count() > 0
+
+    return render_template('bookings/book_listing.html', form=form, listing=listing, booked_status=booked_status)
 
 
 @bookings_bp.route('/my_bookings')
@@ -44,3 +77,21 @@ def cancel_booking(booking_id):
     else:
         flash('You do not have permission to cancel this booking.', 'danger')
     return redirect(url_for('bookings.my_bookings'))
+
+
+@bookings_bp.route('/get_booked_dates/<int:listing_id>', methods=['GET'])
+def get_booked_dates(listing_id):
+    # Retrieve bookings for the listing
+    bookings = Booking.query.filter(
+        Booking.listing_id == listing_id,
+        Booking.status != 'canceled'  # Exclude canceled bookings
+    ).all()
+
+    booked_dates = []
+    for booking in bookings:
+        booked_dates.append({
+            'start': booking.check_in_date.isoformat(),
+            'end': booking.check_out_date.isoformat()
+        })
+
+    return jsonify(booked_dates)

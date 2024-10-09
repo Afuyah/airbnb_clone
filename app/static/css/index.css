@@ -1,0 +1,250 @@
+ .intro-section {
+        padding: 100px 0;
+        background-color: #f0f0f0;
+        animation: fadeInUp 1s ease-in-out;
+    }
+
+    .intro-section h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #333;
+        line-height: 1.2;
+    }
+
+    .intro-section p {
+        font-size: 1.25rem;
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-explore {
+        background-color: #1a73e8;
+        color: #fff;
+        border-radius: 30px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-explore:hover {
+        background-color: #0a5ccd;
+        transform: scale(1.05);
+    }
+
+    /* Featured Listings */
+    .featured-listings {
+        padding: 60px 0;
+        background-color: #fff;
+    }
+
+    .listing-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .listing-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-image-wrapper {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .card-image-wrapper img {
+        width: 100%;
+        height: auto;
+        transition: transform 0.5s ease;
+    }
+
+    .card-image-wrapper:hover img {
+        transform: scale(1.1);
+    }
+
+    /* Parallax Section */
+    .parallax-section {
+        position: relative;
+        color: white;
+        background-size: cover;
+        background-attachment: fixed;
+        background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('{{ url_for("static", filename="images/unique-stay-bg.jpg") }}');
+    }
+
+    .parallax-section h2 {
+        font-size: 2.8rem;
+        font-weight: bold;
+    }
+
+    .parallax-section p {
+        font-size: 1.2rem;
+    }
+
+    /* Curated Experiences */
+    .curated-experiences {
+        padding: 60px 0;
+    }
+
+    .experience-card {
+        background-color: #fff;
+        border-radius: 10px;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        padding: 30px;
+    }
+
+    .experience-card:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transform: translateY(-5px);
+    }
+
+    .icon-wrapper {
+        margin-bottom: 20px;
+    }
+
+    .experience-card h4 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background-color: #222;
+        color: #fff;
+        padding: 80px 0;
+    }
+
+    .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+    }
+
+    .cta-section p {
+        font-size: 1.2rem;
+    }
+
+    .cta-section .btn-light {
+        border-radius: 30px;
+        padding: 12px 25px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .cta-section .btn-light:hover {
+        background-color: #e0e0e0;
+        transform: scale(1.05);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Media Queries for Responsiveness */
+    @media (max-width: 768px) {
+        .intro-section h1 {
+            font-size: 2.5rem;
+        }
+
+        .intro-section p {
+            font-size: 1.1rem;
+        }
+
+        .parallax-section h2 {
+            font-size: 2.2rem;
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+        }
+    }
+
+
+
+/* Testimonials Section */
+.testimonials-section {
+    background-color: #f9f9f9; /* Subtle background color */
+}
+
+.testimonials-slider {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial-item {
+    display: none; /* Hide all items by default */
+    padding: 30px;
+    text-align: center;
+}
+
+.testimonial-item.active {
+    display: block; /* Show the active item */
+}
+
+.testimonial-content {
+    font-size: 1.1rem;
+    color: #444; /* Softer text color */
+    font-style: italic; /* Italic style for a polished look */
+    margin-bottom: 10px;
+}
+
+.testimonial-author {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333; /* Darker color for contrast */
+}
+
+/* Button Styles */
+.btn-outline-primary {
+    border: 2px solid #007bff; /* Border color */
+    color: #007bff; /* Text color */
+    border-radius: 30px; /* Rounded button */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff; /* Button hover background */
+    color: white; /* Button hover text color */
+}
+
+/* Counter Section */
+.counter-section {
+    background-color: #fff; /* Clean background */
+}
+
+.counter-card {
+    background-color: #f8f9fa; /* Light card background */
+    border-radius: 8px; /* Rounded corners */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+}
+
+.counter-card:hover {
+    transform: translateY(-5px); /* Subtle lift on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Enhanced shadow on hover */
+}
+
+.counter-number {
+    font-size: 2.5rem; /* Large font for visibility */
+    font-weight: 700; /* Bold text */
+    color: #007bff; /* Primary color */
+}
+
+.counter-label {
+    font-size: 1rem; /* Standard size for labels */
+    color: #666; /* Subtle color for text */
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    .counter-number {
+        font-size: 2rem; /* Adjust font size for smaller screens */
+    }
+}
+
+
