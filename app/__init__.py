@@ -45,6 +45,7 @@ def create_app():
     from app.routes.support import support_bp  # Support request routes
     from app.routes.admin import admin_bp  # Admin dashboard routes
     from app.routes.owners import owners_bp  # Owner routes
+    from app.routes.agents import agents_bp 
     from app.routes.locations import locations_bp  # Location routes
 
     app.register_blueprint(auth_bp, url_prefix='/auth')  # Register auth blueprint
@@ -55,6 +56,7 @@ def create_app():
     app.register_blueprint(support_bp, url_prefix='/support')  # Support prefix
     app.register_blueprint(admin_bp, url_prefix='/admin')  # Admin prefix
     app.register_blueprint(owners_bp, url_prefix='/owners')  # Owner prefix
+    app.register_blueprint(agents_bp, url_prefix='/agents')  # Owner prefix
     app.register_blueprint(locations_bp, url_prefix='/locations')  # Location prefix
 
     return app  # Return the Flask application instance
