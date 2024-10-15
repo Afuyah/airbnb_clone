@@ -19,6 +19,8 @@ class User(db.Model):
     email = db.Column(db.String(150), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(50), nullable=True, default='guest')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=True)
+
 
     # Relationships
     listings = db.relationship('Listing', backref='owner', lazy='dynamic', foreign_keys='Listing.owner_id', cascade='all, delete-orphan')
