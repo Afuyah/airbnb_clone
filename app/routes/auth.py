@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app import db, limiter  # Import database and rate-limiting extensions
 from app.models.models import User  # Import the User model for authentication
 from app.forms.forms import LoginForm, RegistrationForm  # Import forms for login and registration
 import logging  # For logging errors
@@ -12,7 +11,7 @@ auth_bp = Blueprint('auth', __name__)
 # LOGIN ROUTE
 # -------------------------
 @auth_bp.route('/login', methods=['GET', 'POST'])
-@limiter.limit("5 per minute")  # Apply rate-limiting to prevent brute-force attacks
+
 def login():
     form = LoginForm()  # Create an instance of the login form
     if form.validate_on_submit():  # Check if form data is valid and POST request

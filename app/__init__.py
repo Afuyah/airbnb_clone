@@ -10,7 +10,7 @@ from config import Config  # Load configuration settings
 db = SQLAlchemy()  # SQLAlchemy for ORM
 migrate = Migrate()  # Migrate for database migrations
 login_manager = LoginManager()  # LoginManager for user session management
-limiter = Limiter(key_func=get_remote_address)  # Limiter for rate-limiting
+
 
 # Define the function that loads a user for the session
 @login_manager.user_loader
@@ -21,7 +21,7 @@ def load_user(user_id):
 # Create and configure the Flask application
 def create_app():
     app = Flask(__name__)
-    
+
     # Load configuration from config.py (or environment)
     app.config.from_object(Config)
 
@@ -29,7 +29,6 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
-    limiter.init_app(app)
 
     # Set the default login view for unauthorized access
     login_manager.login_view = 'auth.login'
@@ -47,7 +46,7 @@ def create_app():
     from app.routes.owners import owners_bp  # Owner routes
     from app.routes.locations import locations_bp  # Location routes
 
-    
+
     app.register_blueprint(auth_bp, url_prefix='/auth')  # Register auth blueprint
     app.register_blueprint(main_bp)  # Register main blueprint (root)
     app.register_blueprint(listings_bp, url_prefix='/listings')  # Listings prefix
@@ -60,5 +59,5 @@ def create_app():
 
 
 
-    
+
     return app  # Return the Flask application instance
