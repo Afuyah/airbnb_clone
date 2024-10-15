@@ -1,3 +1,4 @@
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app.models.models import Listing, Amenity, Image, Location, listing_amenities,Booking
@@ -19,10 +20,10 @@ def save_image(image):
     if image and allowed_file(image.filename):
         filename = secure_filename(image.filename)
         image_path = os.path.join(UPLOAD_FOLDER, filename)
-        
+
         # Ensure the upload folder exists
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        
+
         try:
             image.save(image_path)
             return f'/static/upload/{filename}'  # Return URL for accessing the image
@@ -72,7 +73,7 @@ def create_listing():
             location_id=form.location_id.data,
             bedrooms=form.bedrooms.data,  
         )
-        
+
         db.session.add(new_listing)
 
         try:
@@ -157,4 +158,3 @@ def upload_images(listing_id):
             flash(f'Error uploading images: {str(e)}', 'danger')
 
     return render_template('listings/upload_images.html', listing=listing)
-

@@ -1,9 +1,10 @@
+
 {% extends "base.html" %}
 
 {% block title %}Home - Find Your Perfect Stay{% endblock %}
 
 {% block content %}
- <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 <!-- Intro Section with Fluid Animations -->
 <section class="intro-section">
     <div class="container text-center">
@@ -13,18 +14,36 @@
     </div>
 </section>
 
+<!-- Location Filter Section -->
+<section class="location-filter py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Find Your Ideal Location</h2>
+        <form id="location-filter-form">
+            <div class="form-group">
+                <select class="form-control" id="location-select" name="location">
+                    <option value="">Select a location</option>
+                    {% for location in locations %}
+                        <option value="{{ location.id }}">{{ location.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Filter Listings</button>
+        </form>
+    </div>
+</section>
+
 <!-- Featured Listings with Interactive Grid -->
 <section class="featured-listings py-5">
     <div class="container">
         <h2 class="text-center mb-5">Our Handpicked Listings</h2>
-        <div class="row">
+        <div class="row" id="listings-container">
             {% for listing in featured_listings %}
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card listing-card shadow-lg position-relative overflow-hidden">
+                <div class="col-lg-4 col-md-6 mb-4 listing-card" data-location-id="{{ listing.location.id }}">
+                    <div class="card shadow-lg position-relative overflow-hidden">
                         <div class="card-image-wrapper">
-                            <img src="{{ listing.images[0].url if listing.images else url_for('static', filename='images/placeholder.jpg') }}" 
-                                 class="card-img-top" 
-                                 alt="{{ listing.title }} - A beautiful listing" 
+                            <img src="{{ listing.images[0].url if listing.images else url_for('static', filename='images/placeholder.jpg') }}"
+                                 class="card-img-top"
+                                 alt="{{ listing.title }} - A beautiful listing"
                                  loading="lazy">
                         </div>
                         <div class="card-body">
@@ -43,6 +62,7 @@
         </div>
     </div>
 </section>
+
 <!-- Curated Testimonials Section -->
 <section class="testimonials-section py-5">
     <div class="container">
@@ -56,11 +76,11 @@
                     </div>
                     <div class="testimonial-item">
                         <p class="testimonial-content">“The perfect location for exploring the city. I enjoyed every moment of my stay and felt at home the entire time!”</p>
-                        <h5 class="testimonial-author">— Anonimous</h5>
+                        <h5 class="testimonial-author">— Anonymous</h5>
                     </div>
                     <div class="testimonial-item">
                         <p class="testimonial-content">“Exceptional service and a beautiful place to stay. I can't recommend it enough!”</p>
-                        <h5 class="testimonial-author">— Anonimous</h5>
+                        <h5 class="testimonial-author">— Anonymous</h5>
                     </div>
                 </div>
                 <div class="text-center mt-4">
@@ -115,6 +135,7 @@
         </div>
     </div>
 </section>
+
 <!-- Metrics Counter Section -->
 <section class="counter-section py-5">
     <div class="container text-center">
@@ -163,15 +184,58 @@
         font-family: 'Poppins', sans-serif;
         background-color: #f8f9fa;
     }
-
-   
-
-
-
 </style>
 
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" rel="preload">
 
+<!-- Asynchronous JavaScript -->
+<script>
+    document.getElementById('location-filter-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting traditionally
+        const locationId = document.getElementById('location-select').value;
 
+        // Clear current listings
+        const listingsContainer = document.getElementById('listings-container');
+        listingsContainer.innerHTML = ''; // Clear current listings
+
+        // Fetch listings based on selected location
+        fetch(`/main/listings?location_id=${locationId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.listings.length === 0) {
+                    listingsContainer.innerHTML = '<div class="col-12 text-center"><p>No listings found for the selected location.</p></div>';
+                    return;
+                }
+
+                // Iterate through the listings
+                data.listings.forEach(listing => {
+                    const imageUrl = listing.images.length > 0 ? listing.images[0].url : "{{ url_for('static', filename='images/placeholder.jpg') }}";
+                    const listingCard = `
+                        <div class="col-lg-4 col-md-6 mb-4 listing-card" data-location-id="${listing.id}">
+                            <div class="card shadow-lg position-relative overflow-hidden">
+                                <div class="card-image-wrapper">
+                                    <img src="${imageUrl}" 
+                                         class="card-img-top" 
+                                         alt="${listing.title} - A beautiful listing" 
+                                         loading="lazy">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">${listing.title}</h5>
+                                    <p class="card-text">${listing.location_name}</p>
+                                    <p class="card-text"><strong>Ksh. ${listing.price_per_night.toLocaleString(undefined, { minimumFractionDigits: 2 })} per night</strong></p>
+                                    <a href="/listings/${listing.id}" class="btn btn-primary stretched-link">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    listingsContainer.innerHTML += listingCard; // Append the new listing card
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching listings:', error);
+                listingsContainer.innerHTML = '<div class="col-12 text-center"><p>An error occurred while fetching listings. Please try again later.</p></div>';
+            });
+    });
+</script>
 {% endblock %}

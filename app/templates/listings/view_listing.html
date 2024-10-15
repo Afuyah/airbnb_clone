@@ -74,7 +74,7 @@
             </div>
         </div>
 
- <!-- Booking Section -->
+        <!-- Booking Section -->
         <div class="col-md-4">
             <div class="card shadow-sm p-3 mb-4 fadeIn sticky-top">
                 <h4 class="text-center">Book this Listing</h4>
@@ -101,30 +101,7 @@
                 </form>
             </div>
         </div>
-
-<script>
-    // Function to calculate total price
-    function calculateTotalPrice() {
-        const checkInDate = new Date(document.getElementById('check-in').value);
-        const checkOutDate = new Date(document.getElementById('check-out').value);
-        const pricePerNight = {{ listing.price }}; // Replace with the actual price per night
-
-        if (checkInDate && checkOutDate && checkOutDate > checkInDate) {
-            const timeDifference = checkOutDate - checkInDate;
-            const daysDifference = timeDifference / (1000 * 3600 * 24);
-            const totalPrice = daysDifference * pricePerNight;
-            document.getElementById('total-price').value = totalPrice.toFixed(2);
-        } else {
-            document.getElementById('total-price').value = '';
-        }
-    }
-
-    // Attach event listeners to date inputs
-    document.getElementById('check-in').addEventListener('change', calculateTotalPrice);
-    document.getElementById('check-out').addEventListener('change', calculateTotalPrice);
-</script>
-
-
+    </div>
 
     <!-- Related Listings -->
     <div class="row mt-5">
@@ -152,8 +129,6 @@
         </div>
     </div>
 </div>
-
-<!-- Custom Styles -->
 
 <!-- Swiper.js and Flatpickr Script -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
@@ -265,3 +240,4 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 {% endblock %}
+

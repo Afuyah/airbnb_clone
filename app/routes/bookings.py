@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, request
 from flask_login import login_required, current_user
 from app.models.models import Booking, Listing
 from app.forms.forms import BookingForm
 from app import db
+from datetime import datetime
 
 bookings_bp = Blueprint('bookings', __name__)
 
@@ -21,6 +22,11 @@ def book_listing(listing_id):
             flash('Please select both check-in and check-out dates.', 'danger')
             return redirect(url_for('bookings.book_listing', listing_id=listing_id))
 
+        # Ensure check-in is before check-out
+        if check_in >= check_out:
+            flash('Check-out date must be after check-in date.', 'danger')
+            return redirect(url_for('bookings.book_listing', listing_id=listing_id))
+
         # Check for overlapping bookings
         overlapping_bookings = Booking.query.filter(
             Booking.listing_id == listing.id,
@@ -32,14 +38,20 @@ def book_listing(listing_id):
             flash('The selected dates are not available. Please choose different dates.', 'danger')
             return redirect(url_for('bookings.book_listing', listing_id=listing_id))
 
+        # Calculate total price
+        duration = (check_out - check_in).days
+        total_price = duration * listing.price_per_night
+
         # Create new booking if no overlaps
         new_booking = Booking(
             user_id=current_user.id,
             listing_id=listing.id,
             check_in_date=check_in,
             check_out_date=check_out,
-            guests=form.guests.data
+            guests=form.guests.data,
+            total_price=total_price  # Set the calculated total price
         )
+
         db.session.add(new_booking)
         db.session.commit()
         flash('Booking confirmed!', 'success')
@@ -48,7 +60,6 @@ def book_listing(listing_id):
     # On GET request or if form is not valid, check for booked status
     booked_status = False
 
-    # Ensure the fields are properly populated
     if form.check_in_date.data and form.check_out_date.data:
         # Check if the listing is already booked during the requested period
         booked_status = Booking.query.filter(
@@ -65,6 +76,7 @@ def book_listing(listing_id):
 def my_bookings():
     bookings = Booking.query.filter_by(user_id=current_user.id).all()
     return render_template('bookings/my_bookings.html', bookings=bookings)
+
 
 @bookings_bp.route('/cancel_booking/<int:booking_id>')
 @login_required
@@ -95,3 +107,25 @@ def get_booked_dates(listing_id):
         })
 
     return jsonify(booked_dates)
+
+
+@bookings_bp.route('/check_availability/<int:listing_id>', methods=['GET'])
+def check_availability(listing_id):
+    check_in = request.args.get('check_in')
+    check_out = request.args.get('check_out')
+
+    # Ensure check-in and check-out dates are provided
+    if check_in and check_out:
+        check_in_date = datetime.fromisoformat(check_in)
+        check_out_date = datetime.fromisoformat(check_out)
+
+        overlapping_bookings = Booking.query.filter(
+            Booking.listing_id == listing_id,
+            Booking.status != 'canceled',
+            (Booking.check_in_date < check_out_date) & (Booking.check_out_date > check_in_date)
+        ).first()
+
+        if overlapping_bookings:
+            return jsonify({'available': False})
+
+    return jsonify({'available': True})

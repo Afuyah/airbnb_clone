@@ -1,3 +1,4 @@
+
 {% extends 'owners/base.html' %}
 
 {% block title %}Create a New Listing - Airbnb Clone{% endblock %}
@@ -11,7 +12,7 @@
             
             <div class="form-group mb-3">
                 {{ form.title.label(class="form-label") }}
-                {{ form.title(class="form-control form-control-lg", placeholder="Enter listing title", render_kw={"aria-label": "Listing Title"}) }}
+                {{ form.title(class="form-control form-control-lg", placeholder="Enter listing title", render_kw={"aria-label": "Listing Title", "autocomplete": "off"}) }}
                 {% if form.title.errors %}
                     <div class="alert alert-danger mt-2">{{ form.title.errors[0] }}</div>
                 {% endif %}
@@ -49,8 +50,6 @@
                 {% endif %}
             </div>
 
-          
-
             <div class="d-grid gap-2">
                 {{ form.submit(class="btn btn-primary btn-lg") }}
             </div>
@@ -59,4 +58,29 @@
         </form>
     </div>
 </div>
+
+<!-- Custom Styles -->
+<style>
+    .form-label {
+        font-weight: bold;
+    }
+
+    .btn-primary {
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3; /* Darker shade on hover */
+        transform: translateY(-2px); /* Slight lift effect */
+    }
+
+    /* Responsive Design */
+    @media (max-width: 576px) {
+        .container {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+</style>
+
 {% endblock %}

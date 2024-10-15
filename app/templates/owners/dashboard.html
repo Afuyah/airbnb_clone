@@ -74,6 +74,27 @@
             </div>
         </div>
     </div>
+
+    <!-- Booking Calendar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4>Booking Calendar</h4>
+            <!-- Embed a calendar component here (e.g., FullCalendar) -->
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+    <!-- Notifications Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4>Notifications</h4>
+            <ul class="list-group">
+                {% for notification in notifications %}
+                <li class="list-group-item">{{ notification.message }} <small class="text-muted">{{ notification.timestamp }}</small></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -81,12 +102,12 @@
     .hover-zoom {
         transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     }
-    
+
     .hover-zoom:hover {
         transform: translateY(-5px);
         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     }
-    
+
     /* Card Header Styling */
     .card-header {
         font-size: 1.2rem;

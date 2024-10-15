@@ -1,0 +1,12 @@
+modules = ["python-3.12", "cpp-clang14", "web", "c-clang14"]
+run = "python3 app.py"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "python3 app.py"]
+
+[[ports]]
+localPort = 1000
+externalPort = 80
