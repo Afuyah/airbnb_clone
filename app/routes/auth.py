@@ -1,9 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-<<<<<<< HEAD
 from app import db, limiter  # Import database and rate-limiting extensions
-=======
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 from app.models.models import User  # Import the User model for authentication
 from app.forms.forms import LoginForm, RegistrationForm  # Import forms for login and registration
 import logging  # For logging errors
@@ -15,7 +12,6 @@ auth_bp = Blueprint('auth', __name__)
 # LOGIN ROUTE
 # -------------------------
 @auth_bp.route('/login', methods=['GET', 'POST'])
-<<<<<<< HEAD
 @limiter.limit("5 per minute")  # Apply rate-limiting to prevent brute-force attacks
 def login():
     form = LoginForm()  # Create an instance of the login form
@@ -31,23 +27,6 @@ def login():
             flash('Login failed. Please check your credentials.', 'danger')  # Flash error message if login fails
     return render_template('auth/login.html', form=form)  # Render the login template
 
-=======
-
-def login():
-    form = LoginForm()  # Create an instance of the login form
-    if form.validate_on_submit():  # Check if form data is valid and POST request
-        # Query the user by email
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and user.check_password(form.password.data):  # Verify the password
-            login_user(user)  # Log the user in using Flask-Login's login_user()
-            flash('Login successful!', 'success')  # Flash success message
-            next_page = request.args.get('next')  # Get the 'next' page if available
-            return redirect(next_page) if next_page else redirect(url_for('main.index'))  # Redirect after login
-        else:
-            flash('Login failed. Please check your credentials.', 'danger')  # Flash error message if login fails
-    return render_template('auth/login.html', form=form)  # Render the login template
-
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 # -------------------------
 # REGISTRATION ROUTE
 # -------------------------

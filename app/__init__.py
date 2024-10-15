@@ -10,11 +10,7 @@ from config import Config  # Load configuration settings
 db = SQLAlchemy()  # SQLAlchemy for ORM
 migrate = Migrate()  # Migrate for database migrations
 login_manager = LoginManager()  # LoginManager for user session management
-<<<<<<< HEAD
 limiter = Limiter(key_func=get_remote_address)  # Limiter for rate-limiting
-=======
-
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 
 # Define the function that loads a user for the session
 @login_manager.user_loader
@@ -25,27 +21,15 @@ def load_user(user_id):
 # Create and configure the Flask application
 def create_app():
     app = Flask(__name__)
-<<<<<<< HEAD
     
     # Load configuration from config.py (or environment)
     app.config.from_object(Config)
 
-=======
-
-    # Load configuration from config.py (or environment)
-    app.config.from_object(Config)
-
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
     # Initialize extensions with the application
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
     limiter.init_app(app)
-
-    # Set the default login view for unauthorized access
-    login_manager.login_view = 'auth.login'
-    login_manager.login_message = 'Please log in to access this page.'
-    login_manager.login_message_category = 'info'
 
     # Set the default login view for unauthorized access
     login_manager.login_view = 'auth.login'
@@ -63,8 +47,6 @@ def create_app():
     from app.routes.owners import owners_bp  # Owner routes
     from app.routes.locations import locations_bp  # Location routes
 
-<<<<<<< HEAD
-    
     app.register_blueprint(auth_bp, url_prefix='/auth')  # Register auth blueprint
     app.register_blueprint(main_bp)  # Register main blueprint (root)
     app.register_blueprint(listings_bp, url_prefix='/listings')  # Listings prefix
@@ -75,24 +57,4 @@ def create_app():
     app.register_blueprint(owners_bp, url_prefix='/owners')  # Owner prefix
     app.register_blueprint(locations_bp, url_prefix='/locations')  # Location prefix
 
-
-
-    
     return app  # Return the Flask application instance
-=======
-
-    app.register_blueprint(auth_bp, url_prefix='/auth')  # Register auth blueprint
-    app.register_blueprint(main_bp)  # Register main blueprint (root)
-    app.register_blueprint(listings_bp, url_prefix='/listings')  # Listings prefix
-    app.register_blueprint(bookings_bp, url_prefix='/bookings')  # Bookings prefix
-    app.register_blueprint(reviews_bp, url_prefix='/reviews')  # Reviews prefix
-    app.register_blueprint(support_bp, url_prefix='/support')  # Support prefix
-    app.register_blueprint(admin_bp, url_prefix='/admin')  # Admin prefix
-    app.register_blueprint(owners_bp, url_prefix='/owners')  # Owner prefix
-    app.register_blueprint(locations_bp, url_prefix='/locations')  # Location prefix
-
-
-
-
-    return app  # Return the Flask application instance
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8

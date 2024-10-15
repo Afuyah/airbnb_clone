@@ -1,19 +1,14 @@
-
 {% extends "base.html" %}
 
 {% block title %}Home - Find Your Perfect Stay{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-<<<<<<< HEAD
-
-=======
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 <!-- Intro Section with Fluid Animations -->
 <section class="intro-section">
     <div class="container text-center">
-        <h1 class="display-3 font-weight-bold animated-text">Discover Exceptional Stays</h1>
-        <p class="lead mt-3 animated-text">Explore unique homes, unforgettable experiences, and endless possibilities.</p>
+        <h1 class="display-3 font-weight-bold">Discover Exceptional Stays</h1>
+        <p class="lead mt-3">Explore unique homes, unforgettable experiences, and endless possibilities.</p>
         <a href="{{ url_for('listings.list_listings') }}" class="btn btn-explore btn-lg mt-4">Explore Listings</a>
     </div>
 </section>
@@ -22,16 +17,10 @@
 <section class="location-filter py-5">
     <div class="container text-center">
         <h2 class="mb-4">Find Your Ideal Location</h2>
-<<<<<<< HEAD
         <form id="location-filter-form" class="mb-4">
             <div class="form-group">
                 <label for="location-select">Select a Location:</label>
-                <select class="form-control" id="location-select" name="location" aria-label="Select a location">
-=======
-        <form id="location-filter-form">
-            <div class="form-group">
                 <select class="form-control" id="location-select" name="location">
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
                     <option value="">Select a location</option>
                     {% for location in locations %}
                         <option value="{{ location.id }}">{{ location.name }}</option>
@@ -46,11 +35,7 @@
 <!-- Featured Listings with Interactive Grid -->
 <section class="featured-listings py-5">
     <div class="container">
-<<<<<<< HEAD
-        <h2 class="text-center mb-5">Listings</h2>
-=======
         <h2 class="text-center mb-5">Our Handpicked Listings</h2>
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
         <div class="row" id="listings-container">
             {% for listing in featured_listings %}
                 <div class="col-lg-4 col-md-6 mb-4 listing-card" data-location-id="{{ listing.location.id }}">
@@ -77,8 +62,6 @@
         </div>
     </div>
 </section>
-<<<<<<< HEAD
-=======
 
 <!-- Curated Testimonials Section -->
 <section class="testimonials-section py-5">
@@ -109,14 +92,13 @@
 </section>
 
 <!-- Parallax Section with Unique Stays -->
-<section class="parallax-section text-center text-light py-5">
+<section class="parallax-section text-center text-light py-5" style="background: url('path/to/your/parallax-background.jpg') no-repeat center center/cover;">
     <div class="container">
         <h2 class="display-4 mb-4">Experience Unique Stays</h2>
         <p class="lead mb-5">From cozy countryside homes to stunning city apartments, we have a range of properties for every type of traveler.</p>
         <a href="{{ url_for('listings.list_listings') }}" class="btn btn-outline-light btn-lg">Discover More</a>
     </div>
 </section>
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 
 <!-- Curated Experiences Section with Icons -->
 <section class="curated-experiences py-5">
@@ -200,9 +182,8 @@
 <style>
     body {
         font-family: 'Poppins', sans-serif;
-        background-color: #f4f4f4; /* Light background for contrast */
+        background-color: #f8f9fa;
     }
-<<<<<<< HEAD
 
     .card {
         border: none;
@@ -219,48 +200,41 @@
         color: #007bff; /* Bootstrap primary color */
     }
 
-    .experience-card {
-        background-color: #fff; /* White background for cards */
-        border-radius: 10px; /* Rounded corners */
-        transition: transform 0.3s, box-shadow 0.3s;
+    .testimonials-slider .testimonial-item {
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin: 10px;
     }
 
-    .experience-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    .parallax-section {
+        position: relative;
+        overflow: hidden;
     }
 
-    .counter-card {
-        background-color: #fff; /* White background for counter cards */
-        border-radius: 10px;
-        transition: transform 0.3s, box-shadow 0.3s;
+    .parallax-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5); /* Dark overlay for better text readability */
+        z-index: 1;
     }
 
-    .counter-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    .parallax-section .container {
+        position: relative;
+        z-index: 2;
     }
 
+    /* Counter Number Animation */
     .counter-number {
         font-size: 2.5rem;
         font-weight: 700;
         color: #007bff; /* Bootstrap primary color */
     }
-
-    .loading {
-        margin-top: 20px;
-        font-size: 1.2rem;
-        color: #1a73e8;
-    }
-
-    /* Button Customizations */
-    .btn-explore, .btn-primary {
-        border-radius: 30px;
-        padding: 12px 30px;
-        font-weight: 600;
-    }
-=======
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 </style>
 
 <!-- Google Fonts -->
@@ -268,11 +242,11 @@
 
 <!-- Asynchronous JavaScript -->
 <script>
-<<<<<<< HEAD
   // Function to fetch listings based on the selected location
 function fetchListings(locationId) {
+    // Clear existing listings
     const listingsContainer = document.getElementById('listings-container');
-    listingsContainer.innerHTML = '<p class="loading">Loading listings...</p>'; // Loading message
+    listingsContainer.innerHTML = '';
 
     // Make AJAX request to fetch listings for the selected location
     fetch(`/listings/${locationId}`)
@@ -283,7 +257,6 @@ function fetchListings(locationId) {
             return response.json();
         })
         .then(data => {
-            listingsContainer.innerHTML = ''; // Clear loading message
             if (data.listings.length === 0) {
                 listingsContainer.innerHTML = '<p>No listings found for this location.</p>';
                 return;
@@ -320,62 +293,9 @@ function fetchListings(locationId) {
 // Event listener for location dropdown change
 document.getElementById('location-select').addEventListener('change', function() {
     const selectedLocationId = this.value;
-    if (selectedLocationId) {
-        fetchListings(selectedLocationId);
-    } else {
-        // Reset listings if no location is selected
-        document.getElementById('listings-container').innerHTML = '';
-    }
+    fetchListings(selectedLocationId);
 });
 
 </script>
-=======
-    document.getElementById('location-filter-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting traditionally
-        const locationId = document.getElementById('location-select').value;
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 
-        // Clear current listings
-        const listingsContainer = document.getElementById('listings-container');
-        listingsContainer.innerHTML = ''; // Clear current listings
-
-        // Fetch listings based on selected location
-        fetch(`/main/listings?location_id=${locationId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.listings.length === 0) {
-                    listingsContainer.innerHTML = '<div class="col-12 text-center"><p>No listings found for the selected location.</p></div>';
-                    return;
-                }
-
-                // Iterate through the listings
-                data.listings.forEach(listing => {
-                    const imageUrl = listing.images.length > 0 ? listing.images[0].url : "{{ url_for('static', filename='images/placeholder.jpg') }}";
-                    const listingCard = `
-                        <div class="col-lg-4 col-md-6 mb-4 listing-card" data-location-id="${listing.id}">
-                            <div class="card shadow-lg position-relative overflow-hidden">
-                                <div class="card-image-wrapper">
-                                    <img src="${imageUrl}" 
-                                         class="card-img-top" 
-                                         alt="${listing.title} - A beautiful listing" 
-                                         loading="lazy">
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">${listing.title}</h5>
-                                    <p class="card-text">${listing.location_name}</p>
-                                    <p class="card-text"><strong>Ksh. ${listing.price_per_night.toLocaleString(undefined, { minimumFractionDigits: 2 })} per night</strong></p>
-                                    <a href="/listings/${listing.id}" class="btn btn-primary stretched-link">View Details</a>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    listingsContainer.innerHTML += listingCard; // Append the new listing card
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching listings:', error);
-                listingsContainer.innerHTML = '<div class="col-12 text-center"><p>An error occurred while fetching listings. Please try again later.</p></div>';
-            });
-    });
-</script>
 {% endblock %}

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <style>
-       
+        /* Additional styles can be added here */
     </style>
 </head>
 <body>
@@ -17,7 +17,7 @@
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3">
     <div class="container">
-        <a class="navbar-brand" href="{{ url_for('main.index') }}">Modern Airbnb</a>
+        <a class="navbar-brand font-weight-bold" href="{{ url_for('main.index') }}">Modern Airbnb</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -48,13 +48,15 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                        <a class="nav-link btn btn-primary text-white" href="{{ url_for('auth.login') }}">Login</a>
                     </li>
                 {% endif %}
             </ul>
         </div>
     </div>
 </nav>
+
+
 
 <!-- Main Content -->
 <div class="container mt-5 pt-5"> <!-- Spacing for the fixed navbar -->
@@ -73,7 +75,7 @@
 </div>
 
 <!-- Footer -->
-<footer class="footer text-center">
+<footer class="footer text-center py-4">
     <div class="container">
         <p>&copy; 2024 Modern Airbnb. All rights reserved.</p>
         <p>
@@ -108,5 +110,8 @@
         }
     };
 </script>
+
+
+
 </body>
 </html>

@@ -65,7 +65,6 @@ def fetch_listings_by_location(location_id):
     """Fetch listings based on the selected location."""
     try:
         listings = Listing.query.filter_by(location_id=location_id).all()
-<<<<<<< HEAD
         if not listings:
             return jsonify({'listings': []}), 404  # Return 404 if no listings found
 
@@ -85,9 +84,3 @@ def fetch_listings_by_location(location_id):
     except Exception as e:
         logger.error(f"Error fetching listings by location: {e}")
         return jsonify({'error': 'An error occurred while fetching listings.'}), 500
-=======
-        return jsonify({'listings': [{'id': listing.id, 'title': listing.title} for listing in listings]})
-    except Exception as e:
-        logger.error(f"Error fetching listings by location: {e}")
-        return jsonify({'error': 'An error occurred while fetching listings.'}), 500
->>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
