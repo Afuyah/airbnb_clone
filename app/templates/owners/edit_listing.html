@@ -1,0 +1,169 @@
+{% extends 'owners/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Page Heading with subtle animation -->
+    <div class="row mb-4 animated fadeInDown">
+        <div class="col-md-8">
+            <h4 class="display-4">Edit: {{ listing.title }}</h4>
+        </div>
+        <div class="col-md-4 text-right">
+            <a href="{{ url_for('owners.my_listings') }}" class="btn btn-secondary btn-lg shadow-sm">Back to My Listings</a>
+        </div>
+    </div>
+
+    <!-- Edit Listing Form -->
+    <div class="row animated fadeInUp">
+        <div class="col-md-8">
+            <form method="POST" action="{{ url_for('owners.edit_listing', listing_id=listing.id) }}" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {{ form.hidden_tag() }}
+                
+                <!-- Title Field -->
+                <div class="form-group">
+                    {{ form.title.label(class="form-label font-weight-bold") }}
+                    {{ form.title(class="form-control form-control-lg shadow-sm", placeholder="Enter listing title") }}
+                    {% if form.title.errors %}
+                        <div class="text-danger">{{ form.title.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Description Field -->
+                <div class="form-group">
+                    {{ form.description.label(class="form-label font-weight-bold") }}
+                    {{ form.description(class="form-control form-control-lg shadow-sm", rows="4", placeholder="Describe your property") }}
+                    {% if form.description.errors %}
+                        <div class="text-danger">{{ form.description.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Price Per Night Field -->
+                <div class="form-group">
+                    {{ form.price_per_night.label(class="form-label font-weight-bold") }}
+                    {{ form.price_per_night(class="form-control form-control-lg shadow-sm", placeholder="Set a price per night (Ksh)") }}
+                    {% if form.price_per_night.errors %}
+                        <div class="text-danger">{{ form.price_per_night.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Number of Bedrooms Field -->
+                <div class="form-group">
+                    {{ form.bedrooms.label(class="form-label font-weight-bold") }}
+                    {{ form.bedrooms(class="form-control form-control-lg shadow-sm", placeholder="Enter number of bedrooms") }}
+                    {% if form.bedrooms.errors %}
+                        <div class="text-danger">{{ form.bedrooms.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Location Field with a polished Select field style -->
+                <div class="form-group">
+                    {{ form.location_id.label(class="form-label font-weight-bold") }}
+                    {{ form.location_id(class="form-control form-control-lg shadow-sm") }}
+                    {% if form.location_id.errors %}
+                        <div class="text-danger">{{ form.location_id.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Submit Button with animated hover effect -->
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block shadow-sm animate-button">Update Listing</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styling -->
+<style>
+    /* Subtle animations for page content */
+    .animated {
+        animation-duration: 1s;
+        animation-fill-mode: both;
+    }
+
+    .fadeInDown {
+        animation-name: fadeInDown;
+    }
+
+    .fadeInUp {
+        animation-name: fadeInUp;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translate3d(0, -20px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 20px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    /* Button hover animation */
+    .animate-button {
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .animate-button:hover {
+        background-color: #0056b3;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Styling form elements */
+    .form-control {
+        border-radius: 10px;
+        padding: 12px;
+    }
+
+    .form-control-lg {
+        font-size: 1.25rem;
+    }
+
+    .form-label {
+        font-size: 1.1rem;
+        color: #343a40;
+    }
+
+    /* Shadow effect */
+    .shadow-sm {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+        font-size: 1.1rem;
+        padding: 12px 20px;
+        border-radius: 10px;
+    }
+</style>
+
+<!-- JavaScript for Form Validation -->
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+</script>
+{% endblock %}

@@ -85,7 +85,12 @@ def edit_listing(listing_id):
         flash('You do not have permission to edit this listing.', 'danger')
         return redirect(url_for('owners.my_listings'))
 
+    # Fetch available locations from the database
+    locations = Location.query.all()
+    location_choices = [(loc.id, loc.name) for loc in locations]
+
     form = ListingForm(obj=listing)  # Populate the form with existing listing data
+    form.location_id.choices = location_choices  # Populate the location choices
 
     if form.validate_on_submit():
         listing.title = form.title.data
@@ -102,6 +107,7 @@ def edit_listing(listing_id):
             handle_db_error(e, "updating the listing")
 
     return render_template('owners/edit_listing.html', form=form, listing=listing)
+
 
 @owners_bp.route('/delete_listing/<int:listing_id>', methods=['POST'])
 @login_required
