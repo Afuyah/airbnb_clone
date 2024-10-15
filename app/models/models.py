@@ -3,12 +3,19 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import validates
 
+<<<<<<< HEAD
 # Association table for many-to-many relationship between listings and amenities
 listing_amenities = db.Table(
     'listing_amenities',
+=======
+
+listing_amenities = db.Table('listing_amenities',
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
     db.Column('listing_id', db.Integer, db.ForeignKey('listings.id', ondelete='CASCADE'), primary_key=True),
     db.Column('amenity_id', db.Integer, db.ForeignKey('amenities.id', ondelete='CASCADE'), primary_key=True)
-)
+                            )
+
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # User model with corrected relationships and password management
 class User(db.Model):
@@ -19,17 +26,27 @@ class User(db.Model):
     email = db.Column(db.String(150), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(50), nullable=True, default='guest')
+<<<<<<< HEAD
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+=======
+
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
     # Relationships
     listings = db.relationship('Listing', backref='owner', lazy='dynamic', foreign_keys='Listing.owner_id', cascade='all, delete-orphan')
     listings_as_agent = db.relationship('Listing', backref='agent', lazy='dynamic', foreign_keys='Listing.agent_id', cascade='all, delete-orphan')
     bookings = db.relationship('Booking', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     reviews = db.relationship('Review', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     support_requests = db.relationship('SupportRequest', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+    
+    # Using unique backref name 'user_audit_logs' instead of 'user' to avoid conflict
+    audit_logs = db.relationship('AuditLog', backref='user_audit_logs', lazy='dynamic', cascade='all, delete-orphan')
 
+<<<<<<< HEAD
     # Resolving relationship conflict with `overlaps` to avoid warning
     audit_logs = db.relationship('AuditLog', backref='user_audit_logs', lazy='dynamic', cascade='all, delete-orphan', overlaps="audit_logs_user,user_audit_logs")
 
+=======
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
     # Password Methods
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -56,7 +73,10 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username} (ID: {self.id}), Role: {self.role}, Email: {self.email}>'
 
+<<<<<<< HEAD
 # AuditLog model with backref and relationships resolved
+=======
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 class AuditLog(db.Model):
     __tablename__ = 'audit_logs'
 
@@ -65,12 +85,20 @@ class AuditLog(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
+<<<<<<< HEAD
     # Use unique backref `audit_logs_user` in User model
+=======
+    # Use unique backref 'user_audit_logs' in User model
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
     user = db.relationship('User', backref='audit_logs_user', lazy=True)
 
     def __repr__(self):
         return f'<AuditLog Action: {self.action}, User ID: {self.user_id}, Timestamp: {self.timestamp}>'
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 class Listing(db.Model):
     __tablename__ = 'listings'
 
@@ -79,7 +107,11 @@ class Listing(db.Model):
     description = db.Column(db.Text, nullable=False)
     price_per_night = db.Column(db.Float, nullable=False)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
+<<<<<<< HEAD
     agent_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'), index=True, nullable=True)
+=======
+    agent_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'), index=True)
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
     location_id = db.Column(db.Integer, db.ForeignKey('locations.id', ondelete='CASCADE'), nullable=False)
     bedrooms = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -90,15 +122,21 @@ class Listing(db.Model):
     images = db.relationship('Image', backref='listing', lazy='select', cascade='all, delete-orphan')
     reviews = db.relationship('Review', backref='listing', lazy='dynamic', cascade='all, delete-orphan')
     amenities = db.relationship('Amenity', secondary=listing_amenities, backref=db.backref('listings', lazy='dynamic'))
+<<<<<<< HEAD
     
     # Add relationship to Location
     location = db.relationship('Location', backref='listings', lazy='joined')
+=======
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 
     def __repr__(self):
         return f'<Listing {self.title}, Price {self.price_per_night}>'
 
 
+<<<<<<< HEAD
 # Booking model with validation and price calculation
+=======
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 class Booking(db.Model):
     __tablename__ = 'bookings'
 
@@ -127,7 +165,11 @@ class Booking(db.Model):
     def __repr__(self):
         return f'<Booking {self.id} for Listing {self.listing_id} by User {self.user_id}>'
 
+<<<<<<< HEAD
 # Review model with rating validation
+=======
+
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 class Review(db.Model):
     __tablename__ = 'reviews'
 
@@ -146,8 +188,13 @@ class Review(db.Model):
 
     def __repr__(self):
         return f'<Review {self.id} for Listing {self.listing_id} by User {self.user_id}>'
+<<<<<<< HEAD
 
 # Amenity model
+=======
+
+
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 class Amenity(db.Model):
     __tablename__ = 'amenities'
 
@@ -157,7 +204,11 @@ class Amenity(db.Model):
     def __repr__(self):
         return f'<Amenity {self.name}>'
 
+<<<<<<< HEAD
 # SupportRequest model with status update method
+=======
+
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 class SupportRequest(db.Model):
     __tablename__ = 'support_requests'
 
@@ -177,7 +228,11 @@ class SupportRequest(db.Model):
     def __repr__(self):
         return f'<Support Request {self.subject} by User {self.user_id}>'
 
+<<<<<<< HEAD
 # Image model
+=======
+
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 class Image(db.Model):
     __tablename__ = 'images'
 
@@ -188,7 +243,11 @@ class Image(db.Model):
     def __repr__(self):
         return f'<Image {self.id}, URL {self.url}>'
 
+<<<<<<< HEAD
 # Location model with coordinate validation
+=======
+
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
 class Location(db.Model):
     __tablename__ = 'locations'
 
@@ -210,4 +269,10 @@ class Location(db.Model):
         return longitude
 
     def __repr__(self):
+<<<<<<< HEAD
         return f'<Location {self.name}, Coordinates ({self.latitude}, {self.longitude})>'
+=======
+        return f'<Location {self.name}>'
+
+
+>>>>>>> b191b7fdfa28293f712c13a0e470350cf49e1fd8
