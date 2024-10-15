@@ -3,28 +3,48 @@
 {% block title %}Home - Find Your Perfect Stay{% endblock %}
 
 {% block content %}
- <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
 <!-- Intro Section with Fluid Animations -->
 <section class="intro-section">
     <div class="container text-center">
-        <h1 class="display-3 font-weight-bold">Discover Exceptional Stays</h1>
-        <p class="lead mt-3">Explore unique homes, unforgettable experiences, and endless possibilities.</p>
+        <h1 class="display-3 font-weight-bold animated-text">Discover Exceptional Stays</h1>
+        <p class="lead mt-3 animated-text">Explore unique homes, unforgettable experiences, and endless possibilities.</p>
         <a href="{{ url_for('listings.list_listings') }}" class="btn btn-explore btn-lg mt-4">Explore Listings</a>
+    </div>
+</section>
+
+<!-- Location Filter Section -->
+<section class="location-filter py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Find Your Ideal Location</h2>
+        <form id="location-filter-form" class="mb-4">
+            <div class="form-group">
+                <label for="location-select">Select a Location:</label>
+                <select class="form-control" id="location-select" name="location" aria-label="Select a location">
+                    <option value="">Select a location</option>
+                    {% for location in locations %}
+                        <option value="{{ location.id }}">{{ location.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Filter Listings</button>
+        </form>
     </div>
 </section>
 
 <!-- Featured Listings with Interactive Grid -->
 <section class="featured-listings py-5">
     <div class="container">
-        <h2 class="text-center mb-5">Our Handpicked Listings</h2>
-        <div class="row">
+        <h2 class="text-center mb-5">Listings</h2>
+        <div class="row" id="listings-container">
             {% for listing in featured_listings %}
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card listing-card shadow-lg position-relative overflow-hidden">
+                <div class="col-lg-4 col-md-6 mb-4 listing-card" data-location-id="{{ listing.location.id }}">
+                    <div class="card shadow-lg position-relative overflow-hidden">
                         <div class="card-image-wrapper">
-                            <img src="{{ listing.images[0].url if listing.images else url_for('static', filename='images/placeholder.jpg') }}" 
-                                 class="card-img-top" 
-                                 alt="{{ listing.title }} - A beautiful listing" 
+                            <img src="{{ listing.images[0].url if listing.images else url_for('static', filename='images/placeholder.jpg') }}"
+                                 class="card-img-top"
+                                 alt="{{ listing.title }} - A beautiful listing"
                                  loading="lazy">
                         </div>
                         <div class="card-body">
@@ -41,42 +61,6 @@
                 </div>
             {% endfor %}
         </div>
-    </div>
-</section>
-<!-- Curated Testimonials Section -->
-<section class="testimonials-section py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">What Our Guests Say</h2>
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="testimonials-slider">
-                    <div class="testimonial-item">
-                        <p class="testimonial-content">“A wonderful experience from start to finish. The host was incredibly accommodating, and the property was beautifully maintained. Will definitely return!”</p>
-                        <h5 class="testimonial-author">— unknown</h5>
-                    </div>
-                    <div class="testimonial-item">
-                        <p class="testimonial-content">“The perfect location for exploring the city. I enjoyed every moment of my stay and felt at home the entire time!”</p>
-                        <h5 class="testimonial-author">— Anonimous</h5>
-                    </div>
-                    <div class="testimonial-item">
-                        <p class="testimonial-content">“Exceptional service and a beautiful place to stay. I can't recommend it enough!”</p>
-                        <h5 class="testimonial-author">— Anonimous</h5>
-                    </div>
-                </div>
-                <div class="text-center mt-4">
-                    <a href="#" class="btn btn-outline-primary">Explore More Testimonials</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Parallax Section with Unique Stays -->
-<section class="parallax-section text-center text-light py-5">
-    <div class="container">
-        <h2 class="display-4 mb-4">Experience Unique Stays</h2>
-        <p class="lead mb-5">From cozy countryside homes to stunning city apartments, we have a range of properties for every type of traveler.</p>
-        <a href="{{ url_for('listings.list_listings') }}" class="btn btn-outline-light btn-lg">Discover More</a>
     </div>
 </section>
 
@@ -115,6 +99,7 @@
         </div>
     </div>
 </section>
+
 <!-- Metrics Counter Section -->
 <section class="counter-section py-5">
     <div class="container text-center">
@@ -161,17 +146,130 @@
 <style>
     body {
         font-family: 'Poppins', sans-serif;
-        background-color: #f8f9fa;
+        background-color: #f4f4f4; /* Light background for contrast */
     }
 
-   
+    .card {
+        border: none;
+        border-radius: 10px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
 
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
 
+    .icon-wrapper {
+        color: #007bff; /* Bootstrap primary color */
+    }
 
+    .experience-card {
+        background-color: #fff; /* White background for cards */
+        border-radius: 10px; /* Rounded corners */
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .experience-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .counter-card {
+        background-color: #fff; /* White background for counter cards */
+        border-radius: 10px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .counter-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .counter-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #007bff; /* Bootstrap primary color */
+    }
+
+    .loading {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        color: #1a73e8;
+    }
+
+    /* Button Customizations */
+    .btn-explore, .btn-primary {
+        border-radius: 30px;
+        padding: 12px 30px;
+        font-weight: 600;
+    }
 </style>
 
 <!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" rel="preload">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
+<!-- Asynchronous JavaScript -->
+<script>
+  // Function to fetch listings based on the selected location
+function fetchListings(locationId) {
+    const listingsContainer = document.getElementById('listings-container');
+    listingsContainer.innerHTML = '<p class="loading">Loading listings...</p>'; // Loading message
+
+    // Make AJAX request to fetch listings for the selected location
+    fetch(`/listings/${locationId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            listingsContainer.innerHTML = ''; // Clear loading message
+            if (data.listings.length === 0) {
+                listingsContainer.innerHTML = '<p>No listings found for this location.</p>';
+                return;
+            }
+
+            // Populate the listings container with new listings
+            data.listings.forEach(listing => {
+                const listingCard = document.createElement('div');
+                listingCard.className = 'col-lg-4 col-md-6 mb-4 listing-card';
+
+                listingCard.innerHTML = `
+                    <div class="card shadow-lg position-relative overflow-hidden">
+                        <div class="card-image-wrapper">
+                            <img src="${listing.image_url}" alt="${listing.title}" class="card-img-top" loading="lazy" />
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">${listing.title}</h5>
+                            <p class="card-text">${listing.location_name}</p>
+                            <p class="card-text"><strong>Ksh. ${listing.price_per_night.toFixed(2)} per night</strong></p>
+                            <a href="/listing/${listing.id}" class="btn btn-primary stretched-link">View Details</a>
+                        </div>
+                    </div>
+                `;
+                
+                listingsContainer.appendChild(listingCard);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching listings:', error);
+            listingsContainer.innerHTML = '<p>An error occurred while fetching listings. Please try again later.</p>';
+        });
+}
+
+// Event listener for location dropdown change
+document.getElementById('location-select').addEventListener('change', function() {
+    const selectedLocationId = this.value;
+    if (selectedLocationId) {
+        fetchListings(selectedLocationId);
+    } else {
+        // Reset listings if no location is selected
+        document.getElementById('listings-container').innerHTML = '';
+    }
+});
+
+</script>
 
 {% endblock %}

@@ -3,12 +3,14 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import validates
 
-# Association Table for Listings and Amenities
-listing_amenities = db.Table('listing_amenities',
+# Association table for many-to-many relationship between listings and amenities
+listing_amenities = db.Table(
+    'listing_amenities',
     db.Column('listing_id', db.Integer, db.ForeignKey('listings.id', ondelete='CASCADE'), primary_key=True),
     db.Column('amenity_id', db.Integer, db.ForeignKey('amenities.id', ondelete='CASCADE'), primary_key=True)
 )
 
+# User model with corrected relationships and password management
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -17,23 +19,25 @@ class User(db.Model):
     email = db.Column(db.String(150), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(50), nullable=True, default='guest')
-
-    # Specify foreign_keys for the owner-user relationship
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # Relationships
     listings = db.relationship('Listing', backref='owner', lazy='dynamic', foreign_keys='Listing.owner_id', cascade='all, delete-orphan')
-
-    # Specify foreign_keys for the agent-user relationship
     listings_as_agent = db.relationship('Listing', backref='agent', lazy='dynamic', foreign_keys='Listing.agent_id', cascade='all, delete-orphan')
-
     bookings = db.relationship('Booking', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     reviews = db.relationship('Review', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     support_requests = db.relationship('SupportRequest', backref='user', lazy='dynamic', cascade='all, delete-orphan')
 
+    # Resolving relationship conflict with `overlaps` to avoid warning
+    audit_logs = db.relationship('AuditLog', backref='user_audit_logs', lazy='dynamic', cascade='all, delete-orphan', overlaps="audit_logs_user,user_audit_logs")
+
+    # Password Methods
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    # Flask-Login methods
     @property
     def is_active(self):
         return True
@@ -52,7 +56,21 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username} (ID: {self.id}), Role: {self.role}, Email: {self.email}>'
 
-# Updated Listing Model
+# AuditLog model with backref and relationships resolved
+class AuditLog(db.Model):
+    __tablename__ = 'audit_logs'
+
+    id = db.Column(db.Integer, primary_key=True)
+    action = db.Column(db.String(255), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Use unique backref `audit_logs_user` in User model
+    user = db.relationship('User', backref='audit_logs_user', lazy=True)
+
+    def __repr__(self):
+        return f'<AuditLog Action: {self.action}, User ID: {self.user_id}, Timestamp: {self.timestamp}>'
+
 class Listing(db.Model):
     __tablename__ = 'listings'
 
@@ -60,21 +78,27 @@ class Listing(db.Model):
     title = db.Column(db.String(150), nullable=False, index=True)
     description = db.Column(db.Text, nullable=False)
     price_per_night = db.Column(db.Float, nullable=False)
-    owner_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    agent_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'))
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
+    agent_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'), index=True, nullable=True)
     location_id = db.Column(db.Integer, db.ForeignKey('locations.id', ondelete='CASCADE'), nullable=False)
     bedrooms = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow, nullable=True)
 
+    # Relationships
     bookings = db.relationship('Booking', backref='listing', lazy='dynamic', cascade='all, delete-orphan')
     images = db.relationship('Image', backref='listing', lazy='select', cascade='all, delete-orphan')
     reviews = db.relationship('Review', backref='listing', lazy='dynamic', cascade='all, delete-orphan')
+    amenities = db.relationship('Amenity', secondary=listing_amenities, backref=db.backref('listings', lazy='dynamic'))
+    
+    # Add relationship to Location
+    location = db.relationship('Location', backref='listings', lazy='joined')
 
     def __repr__(self):
         return f'<Listing {self.title}, Price {self.price_per_night}>'
 
-# Booking Model
+
+# Booking model with validation and price calculation
 class Booking(db.Model):
     __tablename__ = 'bookings'
 
@@ -84,7 +108,7 @@ class Booking(db.Model):
     check_in_date = db.Column(db.Date, nullable=False)
     check_out_date = db.Column(db.Date, nullable=False)
     guests = db.Column(db.Integer, nullable=False)
-    total_price = db.Column(db.Float, nullable=True)  # Added total price
+    total_price = db.Column(db.Float, nullable=True)  # Automatically calculated
     status = db.Column(db.String(50), default='Pending')  # 'Pending', 'Confirmed', 'Cancelled'
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -95,13 +119,15 @@ class Booking(db.Model):
         return check_out_date
 
     def calculate_total_price(self):
-        # Assuming you fetch the listing price
         listing = Listing.query.get(self.listing_id)
         duration = (self.check_out_date - self.check_in_date).days
         self.total_price = duration * listing.price_per_night
         return self.total_price
 
-# Review Model
+    def __repr__(self):
+        return f'<Booking {self.id} for Listing {self.listing_id} by User {self.user_id}>'
+
+# Review model with rating validation
 class Review(db.Model):
     __tablename__ = 'reviews'
 
@@ -119,32 +145,19 @@ class Review(db.Model):
         return rating
 
     def __repr__(self):
-        return f'<Review (ID: {self.id}) for Listing {self.listing_id} by User {self.user_id}>'
+        return f'<Review {self.id} for Listing {self.listing_id} by User {self.user_id}>'
 
-# Amenity Model
+# Amenity model
 class Amenity(db.Model):
     __tablename__ = 'amenities'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, index=True)
 
-    listings = db.relationship('Listing', secondary=listing_amenities, backref=db.backref('amenities', lazy='joined'))
-
     def __repr__(self):
         return f'<Amenity {self.name}>'
 
-# Image Model
-class Image(db.Model):
-    __tablename__ = 'images'
-
-    id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String(255), nullable=False)
-    listing_id = db.Column(db.Integer, db.ForeignKey('listings.id', ondelete='CASCADE'), nullable=False)
-
-    def __repr__(self):
-        return f'<Image {self.id}, URL {self.url}>'
-
-# Support Request Model
+# SupportRequest model with status update method
 class SupportRequest(db.Model):
     __tablename__ = 'support_requests'
 
@@ -155,10 +168,27 @@ class SupportRequest(db.Model):
     status = db.Column(db.String(50), default='Open')  # 'Open', 'In Progress', 'Closed'
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    def update_status(self, new_status):
+        valid_statuses = ['Open', 'In Progress', 'Closed']
+        if new_status not in valid_statuses:
+            raise ValueError("Invalid status provided.")
+        self.status = new_status
+
     def __repr__(self):
         return f'<Support Request {self.subject} by User {self.user_id}>'
 
-# Location Model
+# Image model
+class Image(db.Model):
+    __tablename__ = 'images'
+
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(255), nullable=False)
+    listing_id = db.Column(db.Integer, db.ForeignKey('listings.id', ondelete='CASCADE'), nullable=False)
+
+    def __repr__(self):
+        return f'<Image {self.id}, URL {self.url}>'
+
+# Location model with coordinate validation
 class Location(db.Model):
     __tablename__ = 'locations'
 
@@ -167,13 +197,17 @@ class Location(db.Model):
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
 
-    listings = db.relationship('Listing', backref='location', lazy='dynamic')
+    @validates('latitude')
+    def validate_latitude(self, key, latitude):
+        if latitude < -90 or latitude > 90:
+            raise ValueError("Latitude must be between -90 and 90")
+        return latitude
 
-    @validates('latitude', 'longitude')
-    def validate_coordinates(self, key, value):
-        if (key == 'latitude' and (value < -90 or value > 90)) or (key == 'longitude' and (value < -180 or value > 180)):
-            raise ValueError(f"{key} must be valid")
-        return value
+    @validates('longitude')
+    def validate_longitude(self, key, longitude):
+        if longitude < -180 or longitude > 180:
+            raise ValueError("Longitude must be between -180 and 180")
+        return longitude
 
     def __repr__(self):
-        return f'<Location {self.name}>'
+        return f'<Location {self.name}, Coordinates ({self.latitude}, {self.longitude})>'

@@ -1,43 +1,49 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1 class="text-center my-4">Book {{ listing.title }}</h1>
+<div class="container my-5">
+    <h1 class="text-center mb-4">Book Your Stay at {{ listing.title }}</h1>
 
-<div class="container">
-    <form method="POST" class="form-group">
-        {{ form.hidden_tag() }}
-        
-        <div class="mb-3">
-            {{ form.check_in_date.label(class="form-label") }} 
-            {{ form.check_in_date(class="form-control", id="check_in_date") }}
-            {% for error in form.check_in_date.errors %}
-                <span class="error text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        
-        <div class="mb-3">
-            {{ form.check_out_date.label(class="form-label") }} 
-            {{ form.check_out_date(class="form-control", id="check_out_date") }}
-            {% for error in form.check_out_date.errors %}
-                <span class="error text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        
-        <div class="mb-3">
-            {{ form.guests.label(class="form-label") }} 
-            {{ form.guests(class="form-control", id="guests") }}
-            {% for error in form.guests.errors %}
-                <span class="error text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        
-        <h4 id="total-amount" class="text-success">Total Amount: $0.00</h4>
-        
-        <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
-    </form>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="POST" class="form-group" id="booking-form">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    {{ form.check_in_date.label(class="form-label") }} 
+                    {{ form.check_in_date(class="form-control", id="check_in_date", placeholder="Select Check-In Date") }}
+                    {% for error in form.check_in_date.errors %}
+                        <span class="error text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.check_out_date.label(class="form-label") }} 
+                    {{ form.check_out_date(class="form-control", id="check_out_date", placeholder="Select Check-Out Date") }}
+                    {% for error in form.check_out_date.errors %}
+                        <span class="error text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.guests.label(class="form-label") }} 
+                    {{ form.guests(class="form-control", id="guests", placeholder="Number of Guests") }}
+                    {% for error in form.guests.errors %}
+                        <span class="error text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                
+                <h4 id="total-amount" class="text-success mb-4">Total Amount: Ksh 0.00</h4>
+                
+                <button type="submit" class="btn btn-primary w-100">{{ form.submit.label }}</button>
+            </form>
 
-    <div class="alert alert-info my-4" role="alert">
-        Your booking is just a click away! Secure your stay today and enjoy a memorable experience.
+            <div class="alert alert-info my-4" role="alert">
+                Your booking is just a click away! Secure your stay today and enjoy a memorable experience.
+            </div>
+
+            <div id="availability-message" class="alert" style="display: none;"></div>
+        </div>
     </div>
 </div>
 
@@ -51,6 +57,7 @@
         const checkOutInput = document.getElementById('check_out_date');
         const guestsInput = document.getElementById('guests');
         const totalAmountDisplay = document.getElementById('total-amount');
+        const availabilityMessage = document.getElementById('availability-message');
 
         function calculateTotal() {
             const checkInDate = new Date(checkInInput.value);
@@ -60,10 +67,30 @@
             if (checkInDate && checkOutDate && checkInDate < checkOutDate) {
                 const nights = (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24);
                 const total = nights * pricePerNight * guests;
-                totalAmountDisplay.textContent = `Total Amount: $${total.toFixed(2)}`;
+                totalAmountDisplay.textContent = `Total Amount: Ksh ${total.toFixed(2)}`;
+                checkAvailability(checkInInput.value, checkOutInput.value);
             } else {
-                totalAmountDisplay.textContent = "Total Amount: $0.00";
+                totalAmountDisplay.textContent = "Total Amount: Ksh 0.00";
+                availabilityMessage.style.display = 'none'; // Hide message if dates are not valid
             }
+        }
+
+        function checkAvailability(checkIn, checkOut) {
+            if (!checkIn || !checkOut) return;
+
+            fetch(`/listing/check_availability/${{ listing.id }}?check_in=${checkIn}&check_out=${checkOut}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.available) {
+                        availabilityMessage.className = 'alert alert-success';
+                        availabilityMessage.textContent = 'The selected dates are available!';
+                    } else {
+                        availabilityMessage.className = 'alert alert-danger';
+                        availabilityMessage.textContent = 'The selected dates are not available. Please choose different dates.';
+                    }
+                    availabilityMessage.style.display = 'block'; // Show availability message
+                })
+                .catch(error => console.error('Error checking availability:', error));
         }
 
         checkInInput.addEventListener('change', calculateTotal);
@@ -76,17 +103,14 @@
 {% block styles %}
 <style>
     body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #f7f7f7;
+        font-family: 'Arial', sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
     }
 
-    .form-group {
-        max-width: 500px;
-        margin: auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    .card {
+        border-radius: 10px;
+        margin-top: 20px; /* Add margin for better spacing */
     }
 
     .btn-primary {
@@ -104,6 +128,10 @@
         border-color: #007bff;
         box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .alert {
+        border-radius: 5px;
     }
 </style>
 {% endblock %}

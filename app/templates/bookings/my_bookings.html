@@ -11,6 +11,7 @@
                 <th>Check-in</th>
                 <th>Check-out</th>
                 <th>Guests</th>
+                <th>Total Amount</th> <!-- New Column for Total Amount -->
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
@@ -22,21 +23,25 @@
                     <td>{{ booking.check_in_date.strftime('%Y-%m-%d') }}</td>
                     <td>{{ booking.check_out_date.strftime('%Y-%m-%d') }}</td>
                     <td>{{ booking.guests }}</td>
+                    <td>Ksh {{ booking.total_price | round(2) }} </td> <!-- Display Total Amount -->
                     <td>{{ booking.status }}</td>
                     <td>
                         <a href="{{ url_for('bookings.cancel_booking', booking_id=booking.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</a>
+                        {% if booking.status == 'completed' %}
+                            <a href="{{ url_for('reviews.add_or_edit_review', booking_id=booking.id) }}" class="btn btn-primary btn-sm">Leave/Edit Review</a>
+                        {% endif %}
                     </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="6" class="text-center">No bookings found.</td>
+                    <td colspan="7" class="text-center">No bookings found.</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-<style> 
 
+<style> 
 body {
     background-color: #f8f9fa; /* Light gray background for better contrast */
 }
@@ -72,6 +77,6 @@ h1 {
     background-color: #c82333; /* Darker red on hover for the cancel button */
     color: white; /* Maintain white text on hover */
 }
-
 </style>
+
 {% endblock %}

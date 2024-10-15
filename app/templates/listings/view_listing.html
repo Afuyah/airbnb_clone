@@ -7,7 +7,7 @@
 <div class="container listing-detail mt-5">
 
     <!-- Listing Title and Price -->
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-md-8">
             <h1 class="display-4">{{ listing.title }}</h1>
             <p class="lead text-muted">{{ listing.location.name }}</p>
@@ -74,7 +74,7 @@
             </div>
         </div>
 
- <!-- Booking Section -->
+        <!-- Booking Section -->
         <div class="col-md-4">
             <div class="card shadow-sm p-3 mb-4 fadeIn sticky-top">
                 <h4 class="text-center">Book this Listing</h4>
@@ -101,36 +101,13 @@
                 </form>
             </div>
         </div>
-
-<script>
-    // Function to calculate total price
-    function calculateTotalPrice() {
-        const checkInDate = new Date(document.getElementById('check-in').value);
-        const checkOutDate = new Date(document.getElementById('check-out').value);
-        const pricePerNight = {{ listing.price }}; // Replace with the actual price per night
-
-        if (checkInDate && checkOutDate && checkOutDate > checkInDate) {
-            const timeDifference = checkOutDate - checkInDate;
-            const daysDifference = timeDifference / (1000 * 3600 * 24);
-            const totalPrice = daysDifference * pricePerNight;
-            document.getElementById('total-price').value = totalPrice.toFixed(2);
-        } else {
-            document.getElementById('total-price').value = '';
-        }
-    }
-
-    // Attach event listeners to date inputs
-    document.getElementById('check-in').addEventListener('change', calculateTotalPrice);
-    document.getElementById('check-out').addEventListener('change', calculateTotalPrice);
-</script>
-
-
+    </div>
 
     <!-- Related Listings -->
     <div class="row mt-5">
         <div class="col-12">
-            <h3>Related Listings</h3>
-            <div class="related-listings">
+            <h3>Also From {{ listing.location.name}}</h3>
+            <div class="related-listings mt-3">
                 {% for related in related_listings %}
                     <div class="card shadow-sm mb-4">
                         {% if related.images %}
@@ -152,8 +129,6 @@
         </div>
     </div>
 </div>
-
-<!-- Custom Styles -->
 
 <!-- Swiper.js and Flatpickr Script -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">

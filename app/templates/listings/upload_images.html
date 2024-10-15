@@ -8,10 +8,44 @@
         <label for="images">Select Images (max 10):</label>
         <input type="file" name="images" id="images" multiple accept="image/*" class="form-control" required>
         <small class="form-text text-muted">You can upload a maximum of 10 images.</small>
+        <div id="preview" class="mt-3"></div>
+        <div id="error-message" class="text-danger mt-2" style="display: none;"></div>
     </div>
     
     <button type="submit" class="btn btn-primary">Upload Images</button>
     <a href="{{ url_for('listings.view_listing', listing_id=listing.id) }}" class="btn btn-secondary">Cancel</a>
 </form>
+
+<script>
+    document.getElementById('images').addEventListener('change', function() {
+        const files = this.files;
+        const preview = document.getElementById('preview');
+        const errorMessage = document.getElementById('error-message');
+        preview.innerHTML = '';  // Clear the preview
+        errorMessage.style.display = 'none'; // Hide error message
+
+        if (files.length > 10) {
+            errorMessage.style.display = 'block';
+            errorMessage.innerText = 'You can upload a maximum of 10 images.';
+            this.value = '';  // Clear file input if invalid
+        } else {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '150px';
+                        img.style.margin = '5px';
+                        img.classList.add('img-thumbnail');
+                        preview.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+    });
+</script>
 
 {% endblock %}
