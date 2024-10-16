@@ -1,6 +1,8 @@
 alembic==1.13.2
 asn1crypto==1.5.1
 blinker==1.8.2
+certifi==2024.8.30
+charset-normalizer==3.4.0
 click==8.1.7
 colorama==0.4.6
 Cython==3.0.11
@@ -39,12 +41,15 @@ Pygments==2.18.0
 pyngrok==7.2.0
 python-dateutil==2.9.0.post0
 PyYAML==6.0.2
+redis==5.1.1
+requests==2.32.3
 rgbprint==4.0.2
 rich==13.9.2
 scramp==1.4.5
 six==1.16.0
 SQLAlchemy==2.0.35
 typing_extensions==4.12.2
+urllib3==2.2.3
 virtualenv==20.26.5
 Werkzeug==3.0.4
 wrapt==1.16.0
