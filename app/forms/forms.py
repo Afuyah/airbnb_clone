@@ -51,3 +51,17 @@ class SupportRequestForm(FlaskForm):
     subject = StringField('Subject', validators=[DataRequired(), Length(max=100)])
     message = TextAreaField('Message', validators=[DataRequired()])
     submit = SubmitField('Submit Request')
+
+
+from wtforms.validators import DataRequired, Length, Regexp
+
+class PaymentForm(FlaskForm):
+    phone_number = StringField(
+        'Phone Number',
+        validators=[
+            DataRequired(),
+            Length(min=10, max=15),
+            Regexp(r'^\+?\d{10,15}$', message="Please enter a valid phone number.")
+        ]
+    )
+    submit = SubmitField('Proceed to Pay')

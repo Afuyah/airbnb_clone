@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Payment for Booking #{{ booking.id }}</h2>
+
+    <!-- Booking Details Section -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+            <h4 class="mb-0">Booking Details</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Listing:</strong> {{ booking.listing.title }}</p>
+            <p><strong>Check-in:</strong> {{ booking.check_in_date.strftime('%B %d, %Y') }}</p>
+            <p><strong>Check-out:</strong> {{ booking.check_out_date.strftime('%B %d, %Y') }}</p>
+            <p><strong>Total Price:</strong> <span class="text-primary">KES {{ total_amount }}</span></p>
+        </div>
+    </div>
+
+    <!-- Payment Form -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4>Enter Payment Details</h4>
+        </div>
+        <div class="card-body">
+            <form id="paymentForm" novalidate>
+                {{ form.hidden_tag() }}
+
+                <!-- Phone Number Input -->
+                <div class="form-group">
+                    <label for="phone_number">Phone Number</label>
+                    {{ form.phone_number(class="form-control", id="phone_number", placeholder="Enter your phone number", required=True) }}
+                    <small class="form-text text-muted">Format: +254XXXXXXXXX</small>
+                    {% if form.phone_number.errors %}
+                        <div class="invalid-feedback d-block">{{ form.phone_number.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Total Amount (read-only, can't be edited) -->
+                <div class="form-group">
+                    <label for="amount">Total Amount</label>
+                    <input type="text" class="form-control" id="amount" value="KES {{ total_amount }}" readonly>
+                </div>
+
+                <!-- Payment Button -->
+                <button type="submit" class="btn btn-success btn-block">Pay Now</button>
+
+                <!-- Loader -->
+                <div id="loading" class="text-center" style="display:none;">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p>Please wait while we process your payment...</p>
+                </div>
+
+                <!-- Feedback Section -->
+                <div id="paymentFeedback" class="mt-3" style="display:none;">
+                    <div class="alert" role="alert"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Optional JavaScript validation (client-side) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const paymentForm = $('#paymentForm');
+    const phoneInput = $('#phone_number');
+    const feedbackDiv = $('#paymentFeedback');
+    const loadingDiv = $('#loading');
+
+    paymentForm.on('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        if (!paymentForm[0].checkValidity()) {
+            feedbackDiv.show().html('<div class="alert alert-danger">Please correct the highlighted errors before proceeding.</div>');
+            phoneInput.addClass('is-invalid');
+            return;
+        }
+
+        // Show loading indicator
+        loadingDiv.show();
+
+        // Send payment data via AJAX
+        $.ajax({
+            url: "{{ url_for('payments.initiate_payment') }}", // Update this URL if necessary
+            type: 'POST',
+            data: {
+                booking_id: "{{ booking.id }}", // Pass the booking ID
+                phone_number: phoneInput.val()
+            },
+            success: function(response) {
+                console.log(response); // Log the response for debugging
+
+                // Check if payment_id is returned in the response
+                if (response.payment_id) {
+                    // Safely replace '0' with the actual payment_id from the response
+                    window.location.href = "{{ url_for('payments.confirm_payment', payment_id='0') }}".replace('0', response.payment_id);
+                } else {
+                    // Hide loading indicator and show error feedback if no payment_id is returned
+                    loadingDiv.hide();
+                    feedbackDiv.show().html('<div class="alert alert-danger">Payment initiation failed. No payment ID returned.</div>');
+                }
+            },
+            error: function(xhr) {
+                // Handle error
+                loadingDiv.hide();
+                feedbackDiv.show().html('<div class="alert alert-danger">Payment initiation failed. Please try again.</div>');
+            }
+        });
+    });
+
+    phoneInput.on('input', function() {
+        if (phoneInput.val().match(/^\+?254\d{9}$/)) {
+            phoneInput.removeClass('is-invalid');
+        }
+    });
+});
+</script>
+
+<style>
+    .container {
+        max-width: 700px;
+    }
+    .card {
+        border-radius: 10px;
+    }
+    .card-header {
+        border-bottom: none;
+    }
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        padding: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+    .form-control.is-invalid {
+        border-color: #e3342f;
+    }
+    .form-text {
+        font-size: 0.9rem;
+    }
+</style>
+
+{% endblock %}

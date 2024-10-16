@@ -214,3 +214,20 @@ class Location(db.Model):
 
     def __repr__(self):
         return f'<Location {self.name}, Coordinates ({self.latitude}, {self.longitude})>'
+
+
+class Payment(db.Model):
+    __tablename__ = 'payments'  # Specify table name if needed
+    id = db.Column(db.Integer, primary_key=True)
+    booking_id = db.Column(db.Integer, db.ForeignKey('bookings.id'), nullable=False)  # Ensure correct table name
+    phone_number = db.Column(db.String(20), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    status = db.Column(db.String(20), default='pending')  # pending, completed, failed
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+
+    # Relationships
+    booking = db.relationship('Booking', backref='payment')
+
+    def __repr__(self):
+        return f'<Payment {self.id}, Status: {self.status}, Amount: {self.amount}>'

@@ -16,6 +16,7 @@ def book_listing(listing_id):
     if form.validate_on_submit():
         check_in = form.check_in_date.data
         check_out = form.check_out_date.data
+        guests = form.guests.data  # Ensure to capture the guests from the form
 
         # Check for valid dates
         if not check_in or not check_out:
@@ -42,20 +43,23 @@ def book_listing(listing_id):
         duration = (check_out - check_in).days
         total_price = duration * listing.price_per_night
 
-        # Create new booking if no overlaps
-        new_booking = Booking(
+        # Create a new booking entry
+        booking = Booking(
             user_id=current_user.id,
             listing_id=listing.id,
             check_in_date=check_in,
             check_out_date=check_out,
-            guests=form.guests.data,
-            total_price=total_price  # Set the calculated total price
+            guests=guests,  # Assign guests value from the form
+            total_price=total_price,
+            status='pending'  # Status before payment
         )
-
-        db.session.add(new_booking)
+        
+        # Add and commit the new booking to the database
+        db.session.add(booking)
         db.session.commit()
-        flash('Booking confirmed!', 'success')
-        return redirect(url_for('bookings.my_bookings'))
+
+        # Redirect to the payment page with the booking ID
+        return redirect(url_for('payments.payment_page', booking_id=booking.id))
 
     # On GET request or if form is not valid, check for booked status
     booked_status = False
@@ -65,10 +69,12 @@ def book_listing(listing_id):
         booked_status = Booking.query.filter(
             Booking.listing_id == listing.id,
             Booking.status != 'canceled',
-            (Booking.check_in_date < form.check_out_date.data) & (Booking.check_out_date > form.check_in_date.data)
+            (Booking.check_in_date < form.check_out_date.data) & 
+            (Booking.check_out_date > form.check_in_date.data)
         ).count() > 0
 
     return render_template('bookings/book_listing.html', form=form, listing=listing, booked_status=booked_status)
+
 
 
 @bookings_bp.route('/my_bookings')
