@@ -93,7 +93,7 @@ class Listing(db.Model):
     images = db.relationship('Image', backref='listing', lazy='select', cascade='all, delete-orphan')
     reviews = db.relationship('Review', backref='listing', lazy='dynamic', cascade='all, delete-orphan')
     amenities = db.relationship('Amenity', secondary=listing_amenities, backref=db.backref('listings', lazy='dynamic'))
-    
+
     # Add relationship to Location
     location = db.relationship('Location', backref='listings', lazy='joined')
 

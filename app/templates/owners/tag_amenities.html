@@ -1,0 +1,21 @@
+{% extends "owners/base.html" %}
+
+{% block content %}
+<h2>Tag Amenities to {{ listing.title }}</h2>
+
+<form method="POST">
+    <div class="form-group">
+        <label for="amenities">Select Amenities:</label>
+        <select name="amenities" id="amenities" class="form-control" multiple>
+            {% for amenity in available_amenities %}
+                <option value="{{ amenity.id }}" 
+                    {% if amenity.id in current_amenities %}selected{% endif %}>
+                    {{ amenity.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Amenities</button>
+    <a href="{{ url_for('owners.my_listings') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

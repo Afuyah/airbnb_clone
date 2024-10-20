@@ -19,6 +19,7 @@ def index():
     per_page = request.args.get('per_page', 6, type=int)
     search_query = request.args.get('search', '', type=str)
     location_id = request.args.get('location_id', type=int)  # Get selected location from query
+    price_range = request.args.get('price_range')  # Get selected price range from query
 
     # Sanitize per_page value
     per_page = min(max(per_page, 1), 100)
@@ -38,6 +39,17 @@ def index():
         if location_id:
             query = query.filter(Listing.location_id == location_id)
 
+        # Filter by selected price range if provided
+        if price_range:
+            if price_range == 'below_2000':
+                query = query.filter(Listing.price_per_night < 2000)
+            elif price_range == '2000_3000':
+                query = query.filter(Listing.price_per_night.between(2000, 3000))
+            elif price_range == '3000_4000':
+                query = query.filter(Listing.price_per_night.between(3000, 4000))
+            elif price_range == '4000_above':
+                query = query.filter(Listing.price_per_night > 4000)
+
         # Fetch listings and paginate the results
         featured_listings = query.paginate(page=page, per_page=per_page, error_out=False)
 
@@ -51,7 +63,8 @@ def index():
             pagination=featured_listings,
             search_query=search_query,
             locations=locations,  # Pass locations for the dropdown
-            selected_location_id=location_id  # Keep track of selected location
+            selected_location_id=location_id,  # Keep track of selected location
+            selected_price_range=price_range  # Keep track of selected price range
         )
 
     except Exception as e:
@@ -79,7 +92,7 @@ def fetch_listings_by_location(location_id):
                 'price_per_night': listing.price_per_night,
                 'location_name': listing.location.name,  # Ensure location name is accessible
             })
-        
+
         return jsonify({'listings': listings_data})
     except Exception as e:
         logger.error(f"Error fetching listings by location: {e}")

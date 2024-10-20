@@ -5,7 +5,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'your_default_secret_key'
 
     # Database configuration using PostgreSQL
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:FogLdsGbyuRXtlcMXoErOCssOoEyiNTh@autorack.proxy.rlwy.net:52876/railway'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///houser.db' # 'postgresql://postgres:FogLdsGbyuRXtlcMXoErOCssOoEyiNTh@autorack.proxy.rlwy.net:52876/railway'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # M-Pesa Configuration

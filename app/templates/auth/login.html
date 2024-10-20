@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Login - Modern Airbnb Clone{% endblock %}
+{% block title %}Login {% endblock %}
 
 {% block content %}
     <div class="container mb-5">
@@ -47,14 +47,10 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
-
+    
     <!-- Initialize AOS animations -->
     <script>
+
         AOS.init({
             duration: 1000, // Animation duration for smoother effect
             easing: 'ease-in-out', // Smoother transitions
@@ -114,6 +110,27 @@
 
         .card-footer p a:hover {
             color: #0056b3;
+        }
+    </style>
+{% endblock %}
+tion: box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+            border-color: #007bff;
+        }
+
+        .card-footer p a {
+            color: #007bff;
+            transition: color 0.3s ease;
+        }
+
+        .card-footer p a:hover {
+            color: #0056b3;
+        }
+    </style>
+{% endblock %}
         }
     </style>
 {% endblock %}

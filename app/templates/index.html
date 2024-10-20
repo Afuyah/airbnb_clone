@@ -13,19 +13,33 @@
     </div>
 </section>
 
-<!-- Location Filter Section -->
+<!--  Filter Section -->
+
 <section class="location-filter py-5">
     <div class="container text-center">
-        <h2 class="mb-4">Find Your Ideal Location</h2>
-        <form id="location-filter-form" class="mb-4">
-            <div class="form-group">
-                <label for="location-select">Select a Location:</label>
-                <select class="form-control" id="location-select" name="location">
-                    <option value="">Select a location</option>
-                    {% for location in locations %}
-                        <option value="{{ location.id }}">{{ location.name }}</option>
-                    {% endfor %}
-                </select>
+        <h2 class="mb-4">Find Your Ideal Listing</h2>
+        <form id="location-filter-form" class="mb-4" method="GET" action="{{ url_for('main.index') }}">
+            <div class="form-row mb-3">
+                <div class="form-group col-md-6">
+                    <label for="location-select">Select a Location:</label>
+                    <select class="form-control" id="location-select" name="location_id">
+                        <option value="">Select a location</option>
+                        {% for location in locations %}
+                            <option value="{{ location.id }}" {% if location.id == selected_location_id %}selected{% endif %}>{{ location.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="price-range-select">Select Price Range:</label>
+                    <select class="form-control" id="price-range-select" name="price_range">
+                        <option value="">Select price range</option>
+                        <option value="below_2000" {% if selected_price_range == 'below_2000' %}selected{% endif %}>Below 2000</option>
+                        <option value="2000_3000" {% if selected_price_range == '2000_3000' %}selected{% endif %}>2000 - 3000</option>
+                        <option value="3000_4000" {% if selected_price_range == '3000_4000' %}selected{% endif %}>3000 - 4000</option>
+                        <option value="4000_above" {% if selected_price_range == '4000_above' %}selected{% endif %}>Above 4000</option>
+                    </select>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Filter Listings</button>
         </form>
@@ -280,7 +294,7 @@ function fetchListings(locationId) {
                         </div>
                     </div>
                 `;
-                
+
                 listingsContainer.appendChild(listingCard);
             });
         })
@@ -299,4 +313,3 @@ document.getElementById('location-select').addEventListener('change', function()
 </script>
 
 {% endblock %}
-ndblock %}
