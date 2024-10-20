@@ -1,0 +1,86 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Create a New Listing - Airbnb Clone{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 mb-5 bg-white rounded">
+        <h1 class="text-center mb-4">Create a New Listing</h1>
+        <form method="POST" enctype="multipart/form-data" class="mt-4">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group mb-3">
+                {{ form.title.label(class="form-label") }}
+                {{ form.title(class="form-control form-control-lg", placeholder="Enter listing title", render_kw={"aria-label": "Listing Title", "autocomplete": "off"}) }}
+                {% if form.title.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.title.errors[0] }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group mb-3">
+                {{ form.description.label(class="form-label") }}
+                {{ form.description(class="form-control form-control-lg", placeholder="Enter listing description", render_kw={"aria-label": "Listing Description"}) }}
+                {% if form.description.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.description.errors[0] }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group mb-3">
+                {{ form.price_per_night.label(class="form-label") }}
+                {{ form.price_per_night(class="form-control form-control-lg", placeholder="Enter price per night", render_kw={"aria-label": "Price Per Night"}) }}
+                {% if form.price_per_night.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.price_per_night.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+                {{ form.bedrooms.label(class="form-label") }}
+                {{ form.bedrooms(class="form-control form-control-lg", placeholder="Enter number of bedrooms", render_kw={"aria-label": "Number of Bedrooms"}) }}
+                {% if form.bedrooms.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.bedrooms.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+                {{ form.location_id.label(class="form-label") }}
+                {{ form.location_id(class="form-select form-select-lg", render_kw={"aria-label": "Location"}) }}
+                {% if form.location_id.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.location_id.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="d-grid gap-2">
+                {{ form.submit(class="btn btn-primary btn-lg") }}
+            </div>
+
+            <p class="text-center mt-3">Need to go back? <a href="{{ url_for('owners.my_listings') }}">View My Listings</a>.</p>
+        </form>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .form-label {
+        font-weight: bold;
+    }
+
+    .btn-primary {
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3; /* Darker shade on hover */
+        transform: translateY(-2px); /* Slight lift effect */
+    }
+
+    /* Responsive Design */
+    @media (max-width: 576px) {
+        .container {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+</style>
+
+{% endblock %}
